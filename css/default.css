@@ -1,0 +1,234 @@
+@charset "UTF-8";
+
+body {
+	background-color:#f9f9f9;
+}
+
+/* ~~ Element/tag selectors ~~ */
+ul, ol, dl { /* Due to variations between browsers, it's best practices to zero padding and margin on lists. For consistency, you can either specify the amounts you want here, or on the list items (LI, DT, DD) they contain. Remember that what you do here will cascade to the .nav list unless you write a more specific selector. */
+	padding: 0;
+	margin: 0;
+}
+h1, h2, h3, h4, h5, h6, p {
+	margin-top: 0;	 /* removing the top margin gets around an issue where margins can escape from their containing div. The remaining bottom margin will hold it away from any elements that follow. */
+	padding-right: 15px;
+	padding-left: 15px; /* adding the padding to the sides of the elements within the divs, instead of the divs themselves, gets rid of any box model math. A nested div with side padding can also be used as an alternate method. */
+}
+a img { /* this selector removes the default blue border displayed in some browsers around an image when it is surrounded by a link */
+	border: none;
+}
+
+/* ~~ Styling for your site's links must remain in this order - including the group of selectors that create the hover effect. ~~ */
+a:link {
+	color:#414958;
+	text-decoration: underline; /* unless you style your links to look extremely unique, it's best to provide underlines for quick visual identification */
+}
+a:visited {
+	color: #4E5869;
+	text-decoration: underline;
+}
+a:hover, a:active, a:focus { /* this group of selectors will give a keyboard navigator the same hover experience as the person using a mouse. */
+	text-decoration: none;
+}
+
+/* ~~ this container surrounds all other divs giving them their percentage-based width ~~ */
+.container {
+	width: 100%;
+	/*max-width: 1260px;/* a max-width may be desirable to keep this layout from getting too wide on a large monitor. This keeps line length more readable. IE6 does not respect this declaration. */
+	/*min-width: 780px;/* a min-width may be desirable to keep this layout from getting too narrow. This keeps line length more readable in the side columns. IE6 does not respect this declaration. */
+	background-color: #FFF;
+	margin: 0 auto; /* the auto value on the sides, coupled with the width, centers the layout. It is not needed if you set the .container's width to 100%. */
+}
+
+/* ~~the header is not given a width. It will extend the full width of your layout. It contains an image placeholder that should be replaced with your own linked logo~~ */
+.header {
+	color:#fff;
+	background-color:#00b4ff;
+	text-shadow:none;
+	height:44px;
+	width:100%;
+}
+
+.header .progressCircle {
+	background:url(../images/progressCircle.png) no-repeat;
+	background-size:80px 80px;
+	height:80px;
+	width:80px;
+	padding:7px;
+}
+
+.progressCircle .progressWrapper {
+	width:66px;
+	height:66px;
+	position:absolute;
+	z-index:1;
+}
+
+.progressCircle .progressInfo {
+	color: #FFF;
+	text-align: center;
+	width: 66px;
+	height: 66px;
+	line-height:66px;
+	font-size: 16px;
+	font-weight: bold;
+	position:absolute;
+	text-shadow:none;
+	z-index:2;
+}
+
+.header .prevPage {
+	display:none;
+	cursor:pointer;
+	background:url(../images/back.png) no-repeat;
+	background-size:22px 22px;
+	background-position:left;
+	height:22px;
+	float:left;
+	margin:11px 0 11px 15px;
+	padding-left:30px;
+}
+
+/* ~~ This is the layout information. ~~ 
+
+1) Padding is only placed on the top and/or bottom of the div. The elements within this div have padding on their sides. This saves you from any "box model math". Keep in mind, if you add any side padding or border to the div itself, it will be added to the width you define to create the *total* width. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design.
+
+*/
+
+.content {
+	padding-top:80px;
+	padding-bottom:45px;
+}
+
+/* ~~ This grouped selector gives the lists in the .content area space ~~ */
+.content ul, .content ol { 
+	padding: 0; /* this padding mirrors the right padding in the headings and paragraph rule above. Padding was placed on the bottom for space between other elements on the lists and on the left to create the indention. These may be adjusted as you wish. */
+}
+
+.content .question p {
+	margin:0;
+	padding:15px;
+}
+
+.content .question .graph {
+	text-align:center;
+}
+
+.content .question .graph img {
+	max-height:30%;
+	margin:15px auto;
+}
+
+.content .answers {
+	border-top:1px solid #c7c7c7;
+}
+
+.content .answers .answerImage {
+	display:none;
+}
+
+.content .answer {
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+.content .answer .answerList {
+	cursor:pointer;
+	min-height:44px;
+	border-bottom:1px solid #c7c7c7;
+}
+
+.content .answer .answerList .answerContent {
+	border:0;
+	border-color:#c7c7c7;
+	border-style:solid;
+	padding:15px;
+}
+
+.content .answer .answerList .answerContent p {
+	display:table-cell;
+	vertical-align:middle;
+	height:44px;
+}
+
+.content .answer .answerList .answerContent .answerSprite {
+	background-repeat:no-repeat;
+}
+
+.content .answer .answerList .mark {
+	display:none;
+	padding:15px;
+	background-position:center;
+	background-size:44px 44px;
+	background-repeat:no-repeat;
+	width:44px;
+	min-height:44px;
+	position:absolute;
+}
+
+.content .answer .answerList .wrong {
+	background-image: url(../images/wrong.png);
+}
+
+.content .answer .answerList .correct {
+	background-image: url(../images/correct.png);
+}
+
+.content .answer .selected .answerContent {
+	background-color:#b2e8ff;
+	border:0;
+	border-color:#00b4ff;
+	border-style:solid;
+	border-top-width:1px;
+	border-bottom-width:1px;
+}
+
+/* ~~ The footer ~~ */
+.footer {
+	color:#fff;
+	background-color:#00b4ff;
+	text-shadow:none;
+	height:44px;
+	width:100%;
+}
+
+.footer .submit {
+	display:none;
+	cursor:pointer;
+	background:url(../images/submit.png) no-repeat;
+	background-size:22px 22px;
+	background-position:left;
+	height:22px;
+	float:left;
+	margin:11px 0 11px 15px;
+	padding-left:30px;
+}
+
+.footer .nextPage {
+	cursor:pointer;
+	background:url(../images/forward.png) no-repeat;
+	background-size:22px 22px;
+	background-position:right;
+	height:22px;
+	float:right;
+	margin:11px 15px 11px 0;
+	text-align:right;
+	padding-right:30px;
+}
+
+/* ~~ miscellaneous float/clear classes ~~ */
+.fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
+	float: right;
+	margin-left: 4px;
+}
+.fltlft { /* this class can be used to float an element left in your page. The floated element must precede the element it should be next to on the page. */
+	float: left;
+	margin-right: 4px;
+}
+.clearfloat { /* this class can be placed on a <br /> or empty div as the final element following the last floated div (within the #container) if the #footer is removed or taken out of the #container */
+	clear:both;
+	height:0;
+	font-size: 1px;
+	line-height: 0px;
+}

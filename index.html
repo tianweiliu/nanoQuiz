@@ -1,0 +1,325 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>nanoQuiz</title>
+<link href="css/jquery.mobile-1.4.2.min.css" rel="stylesheet" type="text/css" />
+<link href="css/nanoQuiz.min.css" rel="stylesheet" type="text/css" />
+<link href="css/default.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
+<!--script src="http://code.jquery.com/mobile/git/jquery.mobile-git.js" type="text/javascript"></script-->
+<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script src="js/jquery.knob.js" type="text/javascript"></script>
+</head>
+
+<body>
+<!--div class="container"-->
+<div class="questions" data-role="page" id="q1">
+  <div class="content">
+    <div class="question">
+      <p> 1. In the H atom, is it possible to determine when the transition of an electron from one quantum state to another occurs? </p>
+      <!-- end .question --></div>
+    <div class="answers">
+      <ul>
+        <li class="answer">
+          <div class="answerList">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <p>a) No, electrons are too small to be directly observed.</p>
+            </div>
+          </div>
+        </li>
+        <li class="answer">
+          <div class="answerList">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <p>b) Yes, by measuring the temperature change of the atom when the transition occurs.</p>
+            </div>
+          </div>
+        </li>
+        <li class="answer">
+          <div class="answerList correct">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <p>c) Yes, by measuring the energy of a photon emitted when the transition occurs.</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <!-- end .answers --></div>
+    <!-- end .content --></div>
+  <!-- end #q1 --></div>
+<div class="questions" data-role="page" id="q2">
+  <div class="content">
+    <div class="question">
+      <p> 2. The graph shows the intensity of blackbody radiation emitted from an object held at two temperatures. Which statement is true? </p>
+      <div class="graph"><img src="data/q2/image1.png" alt="graph" /></div>
+      <!-- end .question --></div>
+    <div class="answers">
+      <ul>
+        <li class="answer">
+          <div class="answerList">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <p>a) T<sub>2</sub> > T<sub>1</sub></p>
+            </div>
+          </div>
+        </li>
+        <li class="answer">
+          <div class="answerList correct">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <p>b) T<sub>1</sub> = T<sub>2</sub></p>
+            </div>
+          </div>
+        </li>
+        <li class="answer">
+          <div class="answerList">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <p>c) T<sub>1</sub> > T<sub>1</sub></p>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <!-- end .answers --></div>
+    <!-- end .content --></div>
+  <!-- end #q2 --></div>
+<div class="questions" data-role="page" id="q3">
+  <div class="content">
+    <div class="question">
+      <p> 3. The rms value of a sine wave V(t)=Vosin(ωt) with a period T is defined by which equation? </p>
+      <!-- end .question --></div>
+    <div class="answers">
+      <img src="data/q7/a.png" alt="answer" class="answerImage"/>
+      <ul>
+        <li class="answer">
+          <div class="answerList">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <div class="answerSprite" id="1of3"></div>
+            </div>
+          </div>
+        </li>
+        <li class="answer">
+          <div class="answerList correct">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <div class="answerSprite" id="2of3"></div>
+            </div>
+          </div>
+        </li>
+        <li class="answer">
+          <div class="answerList">
+            <div class="mark"></div>
+            <div class="answerContent">
+              <div class="answerSprite" id="3of3"></div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <!-- end .answers --></div>
+    <!-- end .content --></div>
+  <!-- end #q3 --></div>
+<!-- end .container --><!--/div-->
+<div class="header ui-header ui-header-fixed ui-header-fullscreen"><!--  data-role="header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="header" -->
+  <div class="prevPage">Back</div>
+  <div class="rightNav"></div>
+  <div class="progressCircle">
+    <div class="progressWrapper">
+      <input class="knob" data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 value="1" data-angleOffset="180" />
+      <!-- end .progressWrapper --></div>
+    <div class="progressInfo">5/10</div>
+    <!-- end .progressCircle --></div>
+  <!-- end .header --></div>
+<div class="footer ui-footer ui-footer-fixed ui-footer-fullscreen" ><!-- data-role="footer" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="footer" -->
+  <div class="submit">Submit</div>
+  <div class="nextPage">Skip</div>
+  <!-- end .footer --></div>
+<script type="text/javascript">
+	var question = 1;
+	var questionCount = 1;
+	$(document).ready(function() {
+		onResize();
+		$(window).resize(function() {
+        	onResize();
+        });
+		quizInit();
+    });
+	
+	function quizInit() {
+		
+		/* Detect questions */
+		questionCount = $(".questions").length;
+		
+		/* Load all answer sprites */
+		$(".answerImage").each(function(index, element) {
+			var sprite = this;
+			$("<img />").load(function(e) {
+				var tmpImg = this;
+                $(sprite).parent("div").find(".answerSprite").each(function(index, element) {
+					if ($(this).attr("id")) {
+						var i = $(this).attr("id").substring(0, 1);
+						var c = $(this).attr("id").substring(3);
+						$(this).css({
+							"background-image": "url(" + $(tmpImg).attr("src") + ")",
+							"background-position": "0px " + ((1 - i) / c * tmpImg.height) + "px",
+							"width": tmpImg.width + "px",
+							"height": tmpImg.height / c + "px"
+						});
+					}
+				});
+            }).attr("src", $(this).attr("src"));
+        });
+		
+		/* Initiate progress knob */
+		$(".knob").knob({
+			"min": 0,
+			"max": questionCount,
+			"fgColor": "#00e4ff"
+		});
+		$(".knob").on("change", function() {
+			$(".progressInfo").html(question.toString() + "/" + questionCount.toString());
+		});
+		
+		switchQuestion();
+		$(':mobile-pagecontainer').on("pagecontainershow", function(event, ui) {
+			onQuestionSwitch(event, ui);
+		});
+		
+		$(".knob").val(question).trigger("change");
+		
+		$(".nextPage").click(function(e) {
+			e.preventDefault();
+			nextQuestion();
+		});
+		
+		$(".prevPage").click(function(e) {
+            e.preventDefault();
+			prevQuestion();
+        });
+		
+		$(window).on("swipeleft", function() {
+			nextQuestion();
+		});
+		
+		$(window).on("swiperight", function() {
+			prevQuestion();
+		});
+	}
+	
+	function nextQuestion() {
+		if (question < questionCount) {
+			question++;
+			switchQuestion();
+			$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slide"} );
+		}
+	}
+	
+	function prevQuestion() {
+		if (question > 1)  {
+			question--;
+			switchQuestion();
+			$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slide", reverse: "true"} );
+		}
+	}
+	
+	function onResize() {
+		$(".progressCircle").css("margin-left", $(window).width() * 0.5 - $(".progressCircle").width() * 0.5 + "px");
+	}
+	
+	function onQuestionSwitch(event, ui) {
+		if ($(".ui-page-active")) {
+			var targetQuestion = $(".ui-page-active").attr("id");
+			if (targetQuestion)
+				targetQuestion = targetQuestion.replace("q", "");
+			if (targetQuestion && targetQuestion <= questionCount && targetQuestion != question) {
+				question = targetQuestion;
+				switchQuestion();
+			}
+		}
+	}
+	
+	function switchQuestion() {
+		$(".knob").val(question).trigger("change");
+		if (question >= questionCount)
+			$(".nextPage").html("Result");
+		else if($("#q" + question).find(".locked").length > 0)
+			$(".nextPage").html("Next");
+		else
+			$(".nextPage").html("Skip");
+		if (question <= 1) 
+			$(".prevPage").hide();
+		else
+			$(".prevPage").show();
+		if ($("#q" + question).find(".selected").length > 0 && $("#q" + question).find(".locked").length == 0) 
+				$(".submit").show();
+			else
+				$(".submit").hide();
+		eventInit();
+		/*
+		$(".selected").removeClass("selected");
+		$(".answer").removeClass("locked");
+		$(".nextPage").html("Skip");
+		$(".answer .answerContent").removeAttr("style");
+		$(".mark").removeClass("correct");
+		$(".mark").removeClass("wrong");
+		$(".mark").hide();
+		$(".answerContent").removeAttr("style");
+		*/
+	}
+	
+	function eventInit() {
+		$(".answer").unbind("click");
+		$(".submit").unbind("click");
+		/* When an answer is clicked */
+		$("#q" + question).find(".answer").click(function(e) {
+            e.preventDefault();
+			if ($(this).hasClass("locked")) 
+				return;
+			$("#q" + question).find(".selected").removeClass("selected");
+			$(this).children(".answerList").addClass("selected");
+			if ($("#q" + question).find(".selected").length > 0) 
+				$(".submit").show();
+			else
+				$(".submit").hide();
+        });
+		
+		/* When submit is clicked */
+		$(".submit").click(function(e) {
+			e.preventDefault();
+			$("#q" + question).find(".answer").addClass("locked");
+			$(".submit").hide();
+			if (question >= questionCount) 
+				$(".nextPage").html("Result");
+			else
+				$(".nextPage").html("Next");
+			$("#q" + question).find(".answer .answerContent").css("color", "#c7c7c7");
+			
+			/* Show correct answer */
+			$("#q" + question).find(".correct .answerContent").animate({
+				marginLeft: "74px"
+			}, "slow").css({
+				"color": "#000",
+				"border-left-width": "1px"
+			});
+			$("#q" + question).find(".correct .mark").addClass("correct").fadeIn("slow");
+			
+			/* Wrong answer selected */
+			if (!$("#q" + question).find(".selected").hasClass("correct")) {
+				$("#q" + question).find(".selected .answerContent").animate({
+					marginLeft: "74px"
+				}, "slow").css({
+					"color": "#000",
+					"border-left-width": "1px"
+				});
+				$("#q" + question).find(".selected .mark").addClass("wrong").fadeIn("slow");
+			}
+        });
+	}
+</script>
+</body>
+</html>
