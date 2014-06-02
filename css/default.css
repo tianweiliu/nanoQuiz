@@ -116,6 +116,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 .content .question .graph img {
 	max-height:30%;
+	max-width:100%;
 	margin:15px auto;
 }
 
