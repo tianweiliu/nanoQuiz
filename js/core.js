@@ -317,6 +317,8 @@ function loadJSON() {
 			/* When selected answer is clicked again */
 			if ($(this).children(".answerList").hasClass("selected")) {
 				submitAnswer();
+				if ($(this).children(".answerList").hasClass("correct"))
+					nextQuestion();
 				return;
 			}
 			
