@@ -338,6 +338,7 @@
 <script type="text/javascript">
 	var question = 1;
 	var questionCount = 1;
+	var switching = false;
 	$(document).ready(function() {
 		onResize();
 		$(window).resize(function() {
@@ -409,18 +410,31 @@
 	
 	function nextQuestion() {
 		if (question < questionCount) {
+			if (switching)
+				return;
+			else
+				switching = true;
 			question++;
 			//switchQuestion();
+			
 			$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slide"} );
 		}
+		else
+			question = questionCount;
 	}
 	
 	function prevQuestion() {
 		if (question > 1)  {
+			if (switching)
+				return;
+			else
+				switching = true;
 			question--;
 			//switchQuestion();
 			$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slide", reverse: "true"} );
 		}
+		else
+			question = 1;
 	}
 	
 	function onResize() {
@@ -436,6 +450,7 @@
 				question = targetQuestion;
 				switchQuestion();
 			}
+			switching = false;
 		}
 	}
 	
