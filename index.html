@@ -80,7 +80,7 @@
           <div class="answerList">
             <div class="mark"></div>
             <div class="answerContent">
-              <p>c) T<sub>1</sub> > T<sub>1</sub></p>
+              <p>c) T<sub>1</sub> > T<sub>2</sub></p>
             </div>
           </div>
         </li>
@@ -483,6 +483,8 @@
 			/* When selected answer is clicked again */
 			if ($(this).children(".answerList").hasClass("selected")) {
 				submitAnswer();
+				if ($(this).children(".answerList").hasClass("correct"))
+					nextQuestion();
 				return;
 			}
 			
@@ -513,21 +515,21 @@
 		/* Show correct answer */
 		$("#q" + question).find(".correct .answerContent").animate({
 			marginLeft: "74px"
-		}, "slow").css({
+		}, "fast").css({
 			"color": "#000",
 			"border-left-width": "1px"
 		});
-		$("#q" + question).find(".correct .mark").addClass("correct").fadeIn("slow");
+		$("#q" + question).find(".correct .mark").addClass("correct").fadeIn("fast");
 		
 		/* Wrong answer selected */
 		if (!$("#q" + question).find(".selected").hasClass("correct")) {
 			$("#q" + question).find(".selected .answerContent").animate({
 				marginLeft: "74px"
-			}, "slow").css({
+			}, "fast").css({
 				"color": "#000",
 				"border-left-width": "1px"
 			});
-			$("#q" + question).find(".selected .mark").addClass("wrong").fadeIn("slow");
+			$("#q" + question).find(".selected .mark").addClass("wrong").fadeIn("fast");
 		}
 	}
 </script>
