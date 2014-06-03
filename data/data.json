@@ -1,0 +1,238 @@
+{
+	"question": [
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "In the H atom, is it possible to determine when the transition of an electron from one quantum state to another occurs?"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "No, electrons are too small to be directly observed."
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "Yes, by measuring the temperature change of the atom when the transition occurs."
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "Yes, by measuring the energy of a photon emitted when the transition occurs."
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "The graph shows the intensity of blackbody radiation emitted from an object held at two temperatures. Which statement is true?"
+				},
+				{
+					"type": "image",
+					"content": "data/q2/image1.png"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": true,
+					"content": "T<sub>2</sub> > T<sub>1</sub>"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "T<sub>1</sub> = T<sub>2</sub>"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "T<sub>1</sub> > T<sub>2</sub>"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "A negative charge is suspended above a uniform sheet of positive charge. The electrostatic potential energy will be a minimum when"
+				},
+				{
+					"type": "image",
+					"content": "data/q3/image1.png"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "the negative charge is a large distance from the charged sheet"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "the negative charge is at a fixed distance from the charged sheet"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "the negative charge is as close as possible to the charged sheet"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "Two charges of opposite polarity are suspended above two uniform sheets of positive charge as shown. When will the electrostatic potential energy of the system of charges as shown take on a minimum value?"
+				},
+				{
+					"type": "image",
+					"content": "data/q4/image1.png"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "when r1→∞, r2→0"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "when r1=r2"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "when r1→0, r2→∞"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "Even through a wave does not result in a bulk transport of matter, it can transfer energy and momentum."
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": true,
+					"content": "True"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "False"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "Can two waves be in the same place at the same time?"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": true,
+					"content": "Yes"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "No"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "The rms value of a sine wave V(t)=Vosin(ωt) with a period T is defined by which equation?"
+				}
+			],
+			"sprite": {
+				"content": "data/q7/a.png"
+			},
+			"answer": [
+				{
+					"type": "sprite",
+					"correct": false,
+					"content": "1of3"
+				},
+				{
+					"type": "sprite",
+					"correct": true,
+					"content": "2of3"
+				},
+				{
+					"type": "sprite",
+					"correct": false,
+					"content": "3of3"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "A snapshot of the electric field of an EM wave is shown. What is the wavelength of this EM wave?"
+				},
+				{
+					"type": "image",
+					"content": "data/q8/image1.png"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "0.05 m"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "0.10 m"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "0.15 m"
+				}
+			]
+		},
+		{
+			"vignette": [
+				{
+					"type": "text",
+					"content": "The prefix ‘nano’ is derived from the Greek word ‘νανοσ’ which means"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "a small coin"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "a dwarf"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "a small city just south of Athens in Greece"
+				}
+			]
+		}
+	]
+}

@@ -105,9 +105,20 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	padding: 0; /* this padding mirrors the right padding in the headings and paragraph rule above. Padding was placed on the bottom for space between other elements on the lists and on the left to create the indention. These may be adjusted as you wish. */
 }
 
-.content .question p {
+.content .question {
 	margin:0;
 	padding:15px;
+}
+
+.content .question .bullet {
+	float:left;
+	padding-right:8px;
+	font-weight:bold;
+}
+
+.content .question p {
+	margin:0;
+	padding:0;
 }
 
 .content .question .graph {
@@ -131,7 +142,6 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 .content .answer {
 	list-style:none;
 	margin:0;
-	padding:0;
 }
 
 .content .answer .answerList {
@@ -147,7 +157,15 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	padding:15px;
 }
 
+.content .answer .answerList .answerContent .bullet {
+	display:table-cell;
+	vertical-align:middle;
+	padding-right:8px;
+}
+
 .content .answer .answerList .answerContent p {
+	margin:0;
+	padding:0;
 	display:table-cell;
 	vertical-align:middle;
 	height:44px;
@@ -155,6 +173,8 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 .content .answer .answerList .answerContent .answerSprite {
 	background-repeat:no-repeat;
+	display:table-cell;
+	vertical-align:middle;
 }
 
 .content .answer .answerList .mark {
