@@ -410,7 +410,7 @@
 	function nextQuestion() {
 		if (question < questionCount) {
 			question++;
-			switchQuestion();
+			//switchQuestion();
 			$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slide"} );
 		}
 	}
@@ -418,7 +418,7 @@
 	function prevQuestion() {
 		if (question > 1)  {
 			question--;
-			switchQuestion();
+			//switchQuestion();
 			$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slide", reverse: "true"} );
 		}
 	}
@@ -432,7 +432,7 @@
 			var targetQuestion = $(".ui-page-active").attr("id");
 			if (targetQuestion)
 				targetQuestion = targetQuestion.replace("q", "");
-			if (targetQuestion && targetQuestion <= questionCount && targetQuestion != question) {
+			if (targetQuestion && targetQuestion <= questionCount) {
 				question = targetQuestion;
 				switchQuestion();
 			}
