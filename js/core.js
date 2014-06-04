@@ -307,28 +307,37 @@ function loadJSON() {
 		$(".submit").unbind("click");
 		
 		/* When an answer is clicked */
-		$("#q" + question).find(".answer").click(function(e) {
+		$("#q" + question).find(".answer").on("mousedown", function(e) {
             e.preventDefault();
 			
 			/* When answer is already submitted */
 			if ($(this).hasClass("locked")) 
 				return;
 			
-			/* When selected answer is clicked again */
-			if ($(this).children(".answerList").hasClass("selected")) {
-				submitAnswer();
-				if ($(this).children(".answerList").hasClass("correct"))
-					nextQuestion();
-				return;
-			}
-			
 			$("#q" + question).find(".selected").removeClass("selected");
 			$(this).children(".answerList").addClass("selected");
+			
 			if ($("#q" + question).find(".selected").length > 0) 
 				$(".submit").show();
 			else
 				$(".submit").hide();
         });
+		
+		$("#q" + question).find(".answer").on("dblclick", function(e) {
+			e.preventDefault();
+			
+			/* When answer is already submitted */
+			if ($(this).hasClass("locked")) 
+				return;
+			else
+				submitAnswer();
+			
+			if ($(this).children(".answerList").hasClass("correct")) {
+				nextQuestion();
+				return;
+			}
+			
+		});
 		
 		/* When submit is clicked */
 		$(".submit").click(function(e) {
