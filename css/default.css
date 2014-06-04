@@ -42,6 +42,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 /* ~~the header is not given a width. It will extend the full width of your layout. It contains an image placeholder that should be replaced with your own linked logo~~ */
 .header {
+	opacity:1;
 	color:#fff;
 	background-color:#00b4ff;
 	text-shadow:none;
@@ -50,10 +51,11 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 }
 
 .header .progressCircle {
+	display:none;
 	background:url(../images/progressCircle.png) no-repeat;
 	background-size:80px 80px;
-	height:80px;
-	width:80px;
+	height:66px;
+	width:66px;
 	padding:7px;
 }
 
@@ -61,7 +63,6 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	width:66px;
 	height:66px;
 	position:absolute;
-	z-index:1;
 }
 
 .progressCircle .progressInfo {
@@ -72,9 +73,8 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	line-height:66px;
 	font-size: 16px;
 	font-weight: bold;
-	position:absolute;
 	text-shadow:none;
-	z-index:2;
+	position:absolute;
 }
 
 .header .prevPage {
@@ -94,8 +94,38 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 1) Padding is only placed on the top and/or bottom of the div. The elements within this div have padding on their sides. This saves you from any "box model math". Keep in mind, if you add any side padding or border to the div itself, it will be added to the width you define to create the *total* width. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design.
 
 */
+#settings .content {
+	padding:45px 0 45px 0;
+}
 
-.content {
+#settings .content .range {
+	border-bottom: 1px solid #c7c7c7;
+}
+
+#settings .content .range .rangeContent {
+	padding:15px;
+}
+
+#settings .content .range .rangeContent input {
+	color:#c7c7c7;
+}
+
+#settings .content .toggleBar {
+	border-bottom: 1px solid #c7c7c7;
+}
+
+#settings .content .toggleBar .label {
+	padding:15px;
+	float:left;
+	line-height: 54px;
+}
+
+#settings .content .toggleBar .toggle {
+	padding:15px;
+	float:right;
+}
+
+.questions .content {
 	padding-top:80px;
 	padding-bottom:45px;
 }
@@ -207,6 +237,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 /* ~~ The footer ~~ */
 .footer {
+	opacity:1;
 	color:#fff;
 	background-color:#00b4ff;
 	text-shadow:none;
@@ -226,7 +257,8 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	padding-left:30px;
 }
 
-.footer .nextPage {
+.footer .forward {
+	display:none;
 	cursor:pointer;
 	background:url(../images/forward.png) no-repeat;
 	background-size:22px 22px;

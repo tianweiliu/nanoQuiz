@@ -18,20 +18,50 @@
 </head>
 
 <body>
-<div class="questions" data-role="page" id="q1"></div>
+<div data-role="page" id="settings">
+	<div class="content">
+        <div class="range">
+        	<div class="rangeContent">
+                <input class="rangeStr" type="text" value="Which set of questions do you want to review?" />
+                <span class="rangeFrom" style="display:none"></span>
+                <span class="rangeTo" style="display:none"></span>
+            </div>
+        </div>
+        <div class="toggleBar shuffleQuestion">
+            <div class="label">Shuffle Questions</div>
+            <div class="toggle">
+                <select name="shuffleQuestionflip" id="shuffleQuestionflip" data-role="slider" data-theme="b">
+                    <option value="off">Off</option>
+                    <option value="on">On</option>
+                </select>
+            </div>
+            <div class="clearfloat"></div>
+        </div>
+        <div class="toggleBar shuffleAnswer">
+            <div class="label">Shuffle Answers</div>
+            <div class="toggle">
+                <select name="shuffleAnswerflip" id="shuffleAnswerflip" data-role="slider" data-theme="b">
+                    <option value="off">Off</option>
+                    <option value="on">On</option>
+                </select>
+            </div>
+            <div class="clearfloat"></div>
+        </div>
+    </div>
+</div>
 <div class="header ui-header ui-header-fixed ui-header-fullscreen"><!--  data-role="header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="header" -->
   <div class="prevPage">Back</div>
   <div class="rightNav"></div>
   <div class="progressCircle">
     <div class="progressWrapper">
-      <input class="knob" data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 value="1" data-angleOffset="180" style="display:none;" />
+      <input class="knob" data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 data-height=66 value="1" data-angleOffset="180" style="display:none;" />
       <!-- end .progressWrapper --></div>
     <div class="progressInfo">5/10</div>
     <!-- end .progressCircle --></div>
   <!-- end .header --></div>
 <div class="footer ui-footer ui-footer-fixed ui-footer-fullscreen" ><!-- data-role="footer" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="footer" -->
   <div class="submit">Submit</div>
-  <div class="nextPage">Skip</div>
+  <div class="forward">Start</div>
   <!-- end .footer --></div>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -39,7 +69,7 @@
 		$(window).resize(function() {
         	onResize();
         });
-		loadJSON();
+		loadJSON("data/data.json");
     });
 </script>
 </body>
