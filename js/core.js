@@ -344,7 +344,7 @@ function loadJSON() {
 		submitAnswer();
 		
 		/* Switch to next question */
-		if ($(this).children(".answerList").hasClass("correct"))
+		if ($answer.children(".answerList").hasClass("correct"))
 			nextQuestion();
 	}
 	
