@@ -303,7 +303,8 @@ function loadJSON() {
 	}
 	
 	function eventInit() {
-		$(".answer").unbind("click");
+		$(".answer").unbind("mousedown");
+		$(".answer").unbind("dblclick");
 		$(".submit").unbind("click");
 		
 		/* When an answer is clicked */
