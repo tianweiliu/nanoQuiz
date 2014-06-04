@@ -211,12 +211,12 @@ function loadJSON() {
 			onQuestionSwitch(event, ui);
 		});
 		
-		$(".nextPage").click(function(e) {
+		$(".nextPage").on("tap", function(e) {
 			e.preventDefault();
 			nextQuestion();
 		});
 		
-		$(".prevPage").click(function(e) {
+		$(".prevPage").on("tap", function(e) {
             e.preventDefault();
 			prevQuestion();
         });
@@ -303,48 +303,49 @@ function loadJSON() {
 	}
 	
 	function eventInit() {
-		$(".answer").unbind("mousedown");
-		$(".answer").unbind("dblclick");
-		$(".submit").unbind("click");
+		$(".answer").unbind("tap");
+		$(".submit").unbind("tap");
 		
-		/* When an answer is clicked */
-		$("#q" + question).find(".answer").on("mousedown", function(e) {
-            e.preventDefault();
-			
-			/* When answer is already submitted */
-			if ($(this).hasClass("locked")) 
-				return;
-			
+		$("#q" + question).find(".answer").on("tap", function(e) {
+			e.preventDefault();
+			chooseAnswer($(this));
+		});
+		
+		/* When submit is clicked */
+		$(".submit").on("tap", function(e) {
+			e.preventDefault();
+			submitAnswer();
+        });
+	}
+	
+	function chooseAnswer($answer) {
+		/* When answer is already submitted */
+		if ($answer.hasClass("locked")) 
+			return;
+		
+		if ($answer.children(".answerList").hasClass("selected"))
+			/* Double tap on answer */
+			quickSubmit($answer);
+		else {
+			/* Select this answer */
 			$("#q" + question).find(".selected").removeClass("selected");
-			$(this).children(".answerList").addClass("selected");
+			$answer.children(".answerList").addClass("selected");
 			
+			/* Show / Hide submit button */
 			if ($("#q" + question).find(".selected").length > 0) 
 				$(".submit").show();
 			else
 				$(".submit").hide();
-        });
+		}
+	}
+	
+	function quickSubmit($answer) {
+		/* Submit selection */
+		submitAnswer();
 		
-		$("#q" + question).find(".answer").on("dblclick", function(e) {
-			e.preventDefault();
-			
-			/* When answer is already submitted */
-			if ($(this).hasClass("locked")) 
-				return;
-			else
-				submitAnswer();
-			
-			if ($(this).children(".answerList").hasClass("correct")) {
-				nextQuestion();
-				return;
-			}
-			
-		});
-		
-		/* When submit is clicked */
-		$(".submit").click(function(e) {
-			e.preventDefault();
-			submitAnswer();
-        });
+		/* Switch to next question */
+		if ($(this).children(".answerList").hasClass("correct"))
+			nextQuestion();
 	}
 	
 	function submitAnswer() {
