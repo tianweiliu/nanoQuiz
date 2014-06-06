@@ -22,9 +22,22 @@
 	<div class="content">
         <div class="range">
         	<div class="rangeContent">
-                <input class="rangeStr" type="text" value="Which set of questions do you want to review?" />
+            	<fieldset data-role="controlgroup" data-type="horizontal">
+            	<select name="unit" id="unit">
+                	<option value="any">Range</option>
+                </select>
+                <select name="from" id="from">
+                	<option value="any">From</option>
+                </select>
+                <select name="to" id="to">
+                	<option value="any">To</option>
+                </select>
+                </fieldset>
+                <!--
+                <input class="rangeStr" type="text" value="Range of questions?" />
                 <span class="rangeFrom" style="display:none"></span>
                 <span class="rangeTo" style="display:none"></span>
+                -->
             </div>
         </div>
         <div class="toggleBar shuffleQuestion">
@@ -45,13 +58,16 @@
                     <option value="on">On</option>
                 </select>
             </div>
-            <div class="clearfloat"></div>
+            <div class="clearfloat" id="searchResult"></div>
         </div>
     </div>
 </div>
 <div class="header ui-header ui-header-fixed ui-header-fullscreen"><!--  data-role="header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="header" -->
   <div class="prevPage">Back</div>
-  <div class="rightNav"></div>
+  <div class="rightNav">
+  	<div class="menuBtn">
+    </div>
+  </div>
   <div class="progressCircle">
     <div class="progressWrapper">
       <input class="knob" data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 data-height=66 value="1" data-angleOffset="180" style="display:none;" />

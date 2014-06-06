@@ -2,6 +2,7 @@
 
 body {
 	background-color:#f9f9f9;
+	font-family:-apple-system-font, Helvetica Neue;
 }
 
 /* ~~ Element/tag selectors ~~ */
@@ -106,9 +107,9 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	padding:15px;
 }
 
-#settings .content .range .rangeContent input {
-	color:#c7c7c7;
-}
+.ui-controlgroup-horizontal .ui-controlgroup-controls { width:100% }
+
+.ui-select { width:33% }
 
 #settings .content .toggleBar {
 	border-bottom: 1px solid #c7c7c7;

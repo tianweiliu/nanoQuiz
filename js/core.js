@@ -2,51 +2,167 @@
 var question = 1;
 var questionCount = 1;
 var instruction;
+var json;
 	
 // Configuration variables
-var URL = "";
+var showConsoleLog = true;
 var shuffleQuestion = false;
 var shuffleAnswer = false;
 
 // Envirnoment variables
 var switching = false;
 
+/* Menu Events */
 function showMenu() {
 	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
 	$(".footer .forward").unbind("tap").removeClass("nextPage").addClass("start").html("Start").show();
 	$(".prevPage").hide();
 	$(".submit").hide();
-	$("#shuffleQuestionflip").on("change", function(event, ui) {
-		shuffleQuestion = ($("#shuffleQuestionflip").val() == "on") ? true : false;
-	}).val(shuffleQuestion ? "on": "off");
-	$("#shuffleQuestionflip").on("change", function(event, ui) {
-		shuffleAnswer = ($("#shuffleAnswerflip").val() == "on") ? true : false;
-	}).val(shuffleQuestion ? "on": "off");
-	$(".start").on("tap", function() {
+	$("#unit").unbind("change", populateSet).on("change", populateSet);
+	$("#from").unbind("change", changeRange).on("change", changeRange);
+	$("#to").unbind("change", changeRange).on("change", changeRange);
+	$("#shuffleQuestionflip").unbind("change", onShuffleQuestionChange).on("change", onShuffleQuestionChange).val(shuffleQuestion ? "on": "off");
+	$("#shuffleAnswerflip").unbind("change", onShuffleAnswerChange).on("change", onShuffleAnswerChange).val(shuffleAnswer ? "on": "off");
+	$(".start").unbind("tap").on("tap", function() {
 		if (contentInit())
 			quizInit();
 	});
+	$("body").unbind("swipeleft");
+	$("body").unbind("swiperight");
+}
+
+function onShuffleQuestionChange(event, ui) {
+	shuffleQuestion = ($("#shuffleQuestionflip").val() == "on") ? true : false;
+}
+
+function onShuffleAnswerChange(event, ui) {
+	shuffleAnswer = ($("#shuffleAnswerflip").val() == "on") ? true : false;
 }
 
 function hideMenu() {
 	$(".progressCircle").fadeIn("fast").animate({marginTop: "0px"}, "fast");
 	$(".start").unbind("tap").removeClass("start").addClass("nextPage").html("Next");
+	$("#unit").unbind("change", populateSet);
 }
 
+function populateUnit() {
+	if (instruction.unit) {
+		$("#unit").children("[value='any']").select();
+		$("#unit").children("[value!='any']").remove();
+		$("#unit").trigger("change");
+		$.each(instruction.unit, function(index, value) {
+			if (!value.base) {
+				$unit = $("<option></option>").attr("name", value.name).attr("value", value.name).html(value.name);
+				$("#unit").append($unit);
+			}
+		});
+	}
+}
+
+function populateSet() {
+	if (instruction.unit) {
+		$("#from").children("[value='any']").select();
+		$("#to").children("[value='any']").select();
+		$("#from").children("[value!='any']").remove();
+		$("#to").children("[value!='any']").remove();
+		$("#from").trigger("change");
+		$("#to").trigger("change");
+		$.each(instruction.unit, function(index, value) {
+			if (!value.base && value.name == $("#unit").val() && value.set) {
+				$.each(value.set, function(i, set) {
+					$fromSet = $("<option></option>").attr("name", set.id).attr("value", set.id).html(set.id);
+					$toSet = $fromSet.clone();
+					$("#from").append($fromSet);
+					$("#to").append($toSet);
+				});
+			}
+		});
+	}
+}
+
+function changeRange() {
+	var from = $("#from").val();
+	var to = $("#to").val();
+	if (instruction.unit && ($("#unit").val() != "any") && (from != "any" || to != "any")) {
+		loadJSON();
+		if (showConsoleLog)
+			console.log("Searching questions (from: '" + $("#unit").val() + " " + from + "', to: '" + $("#unit").val() + " " + to + "')...");
+		$.each(instruction.unit, function(unitIndex, unit) {
+			if (unit.name == $("#unit").val() && instruction.question && instruction.question.length > 0) {
+				if (showConsoleLog)
+					console.log("-\tUnit type (name: '" + unit.name + "') found");
+				var lectureArray = new Array();
+					if (showConsoleLog)
+				console.log("-\tSearching in " + unit.set.length + " sets...");
+				$.each(unit.set, function(setIndex, set) {
+					if ((from == "any" || parseInt(from) > parseInt(to) || set.id >= parseInt(from)) && 
+						(to == "any" || parseInt(from) > parseInt(to) || set.id <= parseInt(to))) {
+							if (showConsoleLog)
+								console.log ("-\t-\t" + set.title + " found");
+							if (set.group && set.group.length > 0) {
+								$.each(set.group, function(lectureId, lecture) {
+									if ($.inArray(lecture, lectureArray) == -1) {
+										if (showConsoleLog)
+											console.log("-\t-\t-\tPushing " + lecture); 
+										lectureArray.push(lecture);
+									}
+								});
+							}
+					}
+				});
+				if (showConsoleLog)
+					console.log("Searching " + lectureArray.length + " lectures in " + instruction.question.length + " questions...");
+				var questionArray = new Array();
+				$.each(instruction.question, function(index, questionData) {
+					if (questionData.stamp && questionData.stamp.length > 0) {
+						$.each(questionData.stamp, function(stampIndex, stamp) {
+							if ($.inArray(stamp.id, lectureArray) != -1 && $.inArray(questionData, questionArray) == -1) {
+								questionArray.push(questionData);
+							}
+						});
+					}
+				});
+				instruction.question = questionArray;
+				if (showConsoleLog)
+					console.log("-\tFound " + questionArray.length + " questions");
+				$("#searchResult").html(questionArray.length + " questions.");
+				return;
+			}
+		});
+	}
+}
+/* End of Menu Events */
+
+/* Data Processing Methods */
 function loadJSON(url) {
-	console.log("Loading JSON...");
-	URL = url;
-	//$(".ui-loader").show();
-	$.ajax({
-		dataType: "json",
-		url: url,
-		success: function(data) {
-			console.log("success");
-			instruction = data;
-			//$(".ui-loader").hide();
-			showMenu();
-		},
-	});
+	if (url) {
+		if (showConsoleLog) {
+			console.log(" -------------------- ");
+			console.log("|  nanoHUB Quiz Core |");
+			console.log("|    1.0 by David    |");
+			console.log(" -------------------- ");
+			console.log("Loading JSON...");
+		}
+		//$(".ui-loader").show();
+		$.ajax({
+			dataType: "json",
+			url: url,
+			success: function(data) {
+				if (showConsoleLog)
+					console.log("-\tJSON loaded");
+				instruction = data;
+				json = JSON.stringify(data);
+				//$(".ui-loader").hide();
+				populateUnit();
+				showMenu();
+			},
+		});
+	}
+	else if(json) {
+		instruction = JSON.parse(json);
+		if (showConsoleLog)
+			console.log("JSON reloaded");
+	}
 }
 
 function contentInit() {
@@ -74,7 +190,8 @@ function contentInit() {
 function loadQuestion(data) {
 	$.each(data, function(index, questionData) {
 		
-		console.log("Loading question " + (index + 1) + "/" + data.length + " ...");
+		if (showConsoleLog)
+			console.log("Loading question " + (index + 1) + "/" + data.length + " ...");
 		/* Create new questions HTML structure */
 		// jQuery Mobile page
 		var $questions = $("<div></div>").attr("data-role", "page").addClass("questions");
@@ -122,7 +239,8 @@ function loadContent(data, $questions) {
 function loadVignette(data, $question) {
 	$.each(data, function(index, nodeData) {
 		if (nodeData.type) {
-			console.log("Loading vignette " + (index + 1) + "/" + data.length + "(" + nodeData.type + ") ...");
+			if (showConsoleLog)
+				console.log("-\tLoading vignette " + (index + 1) + "/" + data.length + "(" + nodeData.type + ") ...");
 			switch (nodeData.type) {
 				case "text":
 					//Text content
@@ -150,7 +268,8 @@ function loadAnswer(data, $answers) {
 	var bullets = "abcdefghijklmnopqrstuvwxyz";
 	$.each(data, function(index, nodeData) {
 		if (nodeData.type) {
-			console.log("Loading answer " + (index + 1) + "/" + data.length + "(" + nodeData.type + ") ...");
+			if (showConsoleLog)
+				console.log("-\tLoading answer " + (index + 1) + "/" + data.length + "(" + nodeData.type + ") ...");
 			
 			/* Create new answer HTML strcuture */
 			var $answer = $("<li></li>").addClass("answer");
@@ -198,7 +317,9 @@ function shuffle(sourceArray) {
 		sourceArray[n] = temp;
 	}
 }
+/* End of Data Processing Methods */
 
+/* Quiz Interface Events */
 function quizInit() {
 	
 	hideMenu();
@@ -240,33 +361,15 @@ function quizInit() {
 		"max": questionCount,
 		"fgColor": "#00e4ff"
 	});
-	$(".knob").on("change", function() {
+	$(".knob").unbind("change").on("change", function() {
 		$(".progressInfo").html(question.toString() + "/" + questionCount.toString());
 	});
 	
-	$(':mobile-pagecontainer').on("pagecontainershow", function(event, ui) {
+	$(':mobile-pagecontainer').unbind("pagecontainershow").on("pagecontainershow", function(event, ui) {
 		onQuestionSwitch(event, ui);
 	});
-	
-	$(".nextPage").on("tap", function(e) {
-		e.preventDefault();
-		nextQuestion();
-	});
-	
-	$(".prevPage").on("tap", function(e) {
-		e.preventDefault();
-		prevQuestion();
-	});
-	
-	$("body").on("swipeleft", function() {
-		nextQuestion();
-	});
-	
-	$("body").on("swiperight", function() {
-		prevQuestion();
-	});
-	
-	console.log("Initialization success\nSwitching to question " + question.toString() + " ...");
+	if (showConsoleLog)
+		console.log("Initialization success\nSwitching to question " + question.toString() + " ...");
 	$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slideup"} );
 }
 
@@ -276,7 +379,8 @@ function nextQuestion() {
 			return;
 		else
 			switching = true;
-		console.log("Switching to question " + (question + 1).toString() + " ...");
+		if (showConsoleLog)
+			console.log("Switching to question " + (question + 1).toString() + " ...");
 		$(':mobile-pagecontainer').pagecontainer( "change", "#q" + (question + 1).toString(), { transition: "slide"} );
 	}
 	else
@@ -289,7 +393,8 @@ function prevQuestion() {
 			return;
 		else
 			switching = true;
-		console.log("Switching to question " + (question - 1).toString() + " ...");
+		if (showConsoleLog)
+			console.log("Switching to question " + (question - 1).toString() + " ...");
 		$(':mobile-pagecontainer').pagecontainer( "change", "#q" + (question - 1).toString(), { transition: "slide", reverse: "true"} );
 	}
 	else
@@ -304,9 +409,10 @@ function onQuestionSwitch(event, ui) {
 	if ($(".ui-page-active")) {
 		var targetQuestion = $(".ui-page-active").attr("id");
 		if (targetQuestion == "settings") {
-			loadJSON(URL);
+			loadJSON();
+			showMenu();
 		}
-		else if(targetQuestion) {
+		else if (targetQuestion) {
 			targetQuestion = parseInt(targetQuestion.replace("q", ""));
 			if (targetQuestion && targetQuestion <= questionCount) {
 				question = targetQuestion;
@@ -350,6 +456,24 @@ function switchQuestion() {
 function eventInit() {
 	$(".answer").unbind("tap");
 	$(".submit").unbind("tap");
+	
+	$(".nextPage").unbind("tap").on("tap", function(e) {
+		e.preventDefault();
+		nextQuestion();
+	});
+	
+	$(".prevPage").unbind("tap").on("tap", function(e) {
+		e.preventDefault();
+		prevQuestion();
+	});
+	
+	$("body").unbind("swipeleft").on("swipeleft", function() {
+		nextQuestion();
+	});
+	
+	$("body").unbind("swiperight").on("swiperight", function() {
+		prevQuestion();
+	});
 	
 	$("#q" + question).find(".answer").on("tap", function(e) {
 		e.preventDefault();
@@ -422,3 +546,4 @@ function submitAnswer() {
 		$("#q" + question).find(".selected .mark").addClass("wrong").fadeIn("fast");
 	}
 }
+/* End of Quiz Interface Events */
