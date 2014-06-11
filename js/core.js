@@ -226,8 +226,11 @@ function loadJSON(url) {
 			json = localStorage.getItem("data");
 			if (instruction = JSON.parse(json)) {
 				if (showConsoleLog)
-					console.log("-\tJSON loaded");
-				loadRemoteJSON(url);
+					console.log("-\tLocal storage JSON loaded");
+			}
+			else {
+				if (showConsoleLog)
+					console.log("-\tNo data in local storage");
 			}
 		} 
 		else {
@@ -235,6 +238,7 @@ function loadJSON(url) {
 				console.log("-\tLocal storage not supported");
 			localStorageReady = false;
 		}
+		loadRemoteJSON(url, localStorageReady);
 	}
 	else if(json) {
 		instruction = JSON.parse(json);
@@ -243,7 +247,7 @@ function loadJSON(url) {
 	}
 }
 
-function loadRemoteJSON(url) {
+function loadRemoteJSON(url, localStorageReady) {
 	if (showConsoleLog)
 		console.log("Loading JSON from server...");
 	$.ajax({
@@ -260,13 +264,14 @@ function loadRemoteJSON(url) {
 			}
 			else {
 				json = JSON.stringify(data);
+				instruction = data;
 				if (localStorageReady) {
 					localStorage.setItem("data", json);
 					if (showConsoleLog)
 						console.log("-\tJSON stored to local storage");
 				}
 			}
-			loadDefaultJSON();
+			loadDefaultJSON(localStorageReady);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			if (showConsoleLog)
@@ -276,7 +281,7 @@ function loadRemoteJSON(url) {
 	});
 }
 
-function loadDefaultJSON() {
+function loadDefaultJSON(localStorageReady) {
 	if (showConsoleLog)
 		console.log("Loading default JSON...");
 	$.ajax({
@@ -292,6 +297,7 @@ function loadDefaultJSON() {
 			}
 			else {
 				json = JSON.stringify(data);
+				instruction = data;
 				if (localStorageReady) {
 					localStorage.setItem("data", json);
 					if (showConsoleLog)
