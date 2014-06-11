@@ -31,6 +31,7 @@
 		},
 		{
 			"name": "Week",
+			"default": true,
 			"set": [
 				{
 					"id": "1",

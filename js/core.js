@@ -3,6 +3,14 @@ var question = 1;
 var questionCount = 1;
 var instruction;
 var json;
+var totalQuestionCount = 0;
+var lastFrom = "any";
+var lastTo = "any";
+var selectCounter = {
+	"unit": 0,
+	"from": 0,
+	"to": 0
+}
 	
 // Configuration variables
 var showConsoleLog = true;
@@ -11,62 +19,89 @@ var shuffleAnswer = false;
 
 // Envirnoment variables
 var switching = false;
+var inMenu = true;
+const DEFAULT_JSON_URL = "data/data.json";
+
+function onReady() {
+	$("body").off("tap").on("tap", function() {
+		$.each(selectCounter, function(key, value) {
+			if (!$("#" + key + "-button").find(":hover").length)
+				$("#" + key).blur();
+		});
+	});
+	$("body").on("swipeleft", function() {
+		nextQuestion();
+	});
+	$("body").on("swiperight", function() {
+		prevQuestion();
+	});
+	$("#shuffleQuestionflip").on("change", function(event, ui) {
+		shuffleQuestion = ($("#shuffleQuestionflip").val() == "on") ? true : false;
+	});
+	$("#shuffleAnswerflip").on("change", function(event, ui) {
+		shuffleAnswer = ($("#shuffleAnswerflip").val() == "on") ? true : false;
+	});
+	$("#unit").on("change", populateSet);
+	$("#from").on("change", changeRange);
+	$("#to").on("change", changeRange);
+}
 
 /* Menu Events */
 function showMenu() {
+	inMenu = true;
 	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
-	$(".footer .forward").unbind("tap").removeClass("nextPage").addClass("start").html("Start").show();
+	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
 	$(".prevPage").hide();
 	$(".submit").hide();
-	$("#unit").unbind("change", populateSet).on("change", populateSet);
-	$("#from").unbind("change", changeRange).on("change", changeRange);
-	$("#to").unbind("change", changeRange).on("change", changeRange);
-	$("#shuffleQuestionflip").unbind("change", onShuffleQuestionChange).on("change", onShuffleQuestionChange).val(shuffleQuestion ? "on": "off");
-	$("#shuffleAnswerflip").unbind("change", onShuffleAnswerChange).on("change", onShuffleAnswerChange).val(shuffleAnswer ? "on": "off");
-	$(".start").unbind("tap").on("tap", function() {
+	$(".start").off("tap").on("tap", function() {
 		if (contentInit())
 			quizInit();
 	});
-	$("body").unbind("swipeleft");
-	$("body").unbind("swiperight");
-}
-
-function onShuffleQuestionChange(event, ui) {
-	shuffleQuestion = ($("#shuffleQuestionflip").val() == "on") ? true : false;
-}
-
-function onShuffleAnswerChange(event, ui) {
-	shuffleAnswer = ($("#shuffleAnswerflip").val() == "on") ? true : false;
 }
 
 function hideMenu() {
+	inMenu = false;
 	$(".progressCircle").fadeIn("fast").animate({marginTop: "0px"}, "fast");
-	$(".start").unbind("tap").removeClass("start").addClass("nextPage").html("Next");
-	$("#unit").unbind("change", populateSet);
+	$(".start").off("tap").removeClass("start").addClass("nextPage").html("Next");
+	$(".nextPage").off("tap").on("tap", function(e) {
+		e.preventDefault();
+		nextQuestion();
+	});
+	$(".prevPage").off("tap").on("tap", function(e) {
+		e.preventDefault();
+		prevQuestion();
+	});
 }
 
 function populateUnit() {
 	if (instruction.unit) {
 		$("#unit").children("[value='any']").select();
 		$("#unit").children("[value!='any']").remove();
-		$("#unit").trigger("change");
+		lastFrom = "any";
+		lastTo = "any";
 		$.each(instruction.unit, function(index, value) {
 			if (!value.base) {
 				$unit = $("<option></option>").attr("name", value.name).attr("value", value.name).html(value.name);
 				$("#unit").append($unit);
+				if (value.default) {
+					$("#unit").val(value.name);
+				}
 			}
 		});
+		$("#unit").trigger("change");
 	}
 }
 
 function populateSet() {
 	if (instruction.unit) {
+		if ($("#from").val() != "any")
+			lastFrom = $("#from").val();
+		if ($("#to").val() != "any")
+			lastTo = $("#to").val();
 		$("#from").children("[value='any']").select();
 		$("#to").children("[value='any']").select();
 		$("#from").children("[value!='any']").remove();
 		$("#to").children("[value!='any']").remove();
-		$("#from").trigger("change");
-		$("#to").trigger("change");
 		$.each(instruction.unit, function(index, value) {
 			if (!value.base && value.name == $("#unit").val() && value.set) {
 				$.each(value.set, function(i, set) {
@@ -74,9 +109,15 @@ function populateSet() {
 					$toSet = $fromSet.clone();
 					$("#from").append($fromSet);
 					$("#to").append($toSet);
+					if (set.id == lastFrom)
+						$("#from").val(lastFrom);
+					if (set.id == lastTo)
+						$("#to").val(lastTo);
 				});
 			}
 		});
+		$("#from").trigger("change");
+		$("#to").trigger("change");
 	}
 }
 
@@ -94,9 +135,14 @@ function changeRange() {
 				var lectureArray = new Array();
 					if (showConsoleLog)
 				console.log("-\tSearching in " + unit.set.length + " sets...");
+				if (from != "any" && to != "any" && parseInt(from) > parseInt(to)) {
+					var temp = from;
+					from = to;
+					to = temp;
+				}
 				$.each(unit.set, function(setIndex, set) {
-					if ((from == "any" || parseInt(from) > parseInt(to) || set.id >= parseInt(from)) && 
-						(to == "any" || parseInt(from) > parseInt(to) || set.id <= parseInt(to))) {
+					if ((from == "any" || set.id >= parseInt(from)) && 
+						(to == "any" || set.id <= parseInt(to))) {
 							if (showConsoleLog)
 								console.log ("-\t-\t" + set.title + " found");
 							if (set.group && set.group.length > 0) {
@@ -113,22 +159,50 @@ function changeRange() {
 				if (showConsoleLog)
 					console.log("Searching " + lectureArray.length + " lectures in " + instruction.question.length + " questions...");
 				var questionArray = new Array();
+				clearSearchResultBar($(".listBar"));
 				$.each(instruction.question, function(index, questionData) {
 					if (questionData.stamp && questionData.stamp.length > 0) {
 						$.each(questionData.stamp, function(stampIndex, stamp) {
 							if ($.inArray(stamp.id, lectureArray) != -1 && $.inArray(questionData, questionArray) == -1) {
 								questionArray.push(questionData);
+								fillSearchResultBar($(".listBar"), index);
 							}
 						});
+					}
+					/* If question does not have a stamp, put it in the list */
+					else {
+						if ($.inArray(questionData, questionArray) == -1) {
+							questionArray.push(questionData);
+							fillSearchResultBar($(".listBar"), index);
+						}
 					}
 				});
 				instruction.question = questionArray;
 				if (showConsoleLog)
 					console.log("-\tFound " + questionArray.length + " questions");
-				$("#searchResult").html(questionArray.length + " questions.");
 				return;
 			}
 		});
+	}
+	else
+		fillSearchResultBar($(".listBar"), -1);
+}
+
+function clearSearchResultBar($listBar) {
+	$listBar.children(".chunkBar").removeClass("filled");
+}
+
+function fillSearchResultBar($listBar, index) {
+	if (index < 0 || index > $listBar.children(".chunkBar").length)
+		$listBar.children(".chunkBar").addClass("filled");
+	else
+		$($listBar.children(".chunkBar")[index]).addClass("filled");
+}
+
+function loadSearchResultBar($listBar, chunkCount) {
+	for (var i = 0; i < chunkCount; i++) {
+		var $chunkBar = $("<div></div>").addClass("chunkBar").css("width", (($listBar.width()/chunkCount - 1) / $listBar.width() * 100) + "%");
+		$listBar.append($chunkBar);
 	}
 }
 /* End of Menu Events */
@@ -141,28 +215,101 @@ function loadJSON(url) {
 			console.log("|  nanoHUB Quiz Core |");
 			console.log("|    1.0 by David    |");
 			console.log(" -------------------- ");
-			console.log("Loading JSON...");
 		}
-		//$(".ui-loader").show();
-		$.ajax({
-			dataType: "json",
-			url: url,
-			success: function(data) {
+		$(".ui-loader").show();
+		var localStorageReady = false;
+		if(typeof(Storage) !== "undefined") {
+			// Code for localStorage/sessionStorage.
+			if (showConsoleLog)
+				console.log("Loading JSON from local storage...");
+			localStorageReady = true;
+			json = localStorage.getItem("data");
+			if (instruction = JSON.parse(json)) {
 				if (showConsoleLog)
 					console.log("-\tJSON loaded");
-				instruction = data;
-				json = JSON.stringify(data);
-				//$(".ui-loader").hide();
-				populateUnit();
-				showMenu();
-			},
-		});
+				loadRemoteJSON(url);
+			}
+		} 
+		else {
+			if (showConsoleLog)
+				console.log("-\tLocal storage not supported");
+			localStorageReady = false;
+		}
 	}
 	else if(json) {
 		instruction = JSON.parse(json);
 		if (showConsoleLog)
 			console.log("JSON reloaded");
 	}
+}
+
+function loadRemoteJSON(url) {
+	if (showConsoleLog)
+		console.log("Loading JSON from server...");
+	$.ajax({
+		dataType: "jsonp",
+		url: url,
+		jsonp: "callback",
+		success: function(data) {
+			if (showConsoleLog)
+				console.log("-\tRemote JSON loaded, comparing...");
+			//$(".ui-loader").hide();
+			if (instruction && instruction.version && data.version && parseFloat(instruction.version) >= parseFloat(data.version)) {
+				if (showConsoleLog)
+					console.log("-\tLocal storage is newer or the same as remote");
+			}
+			else {
+				json = JSON.stringify(data);
+				if (localStorageReady) {
+					localStorage.setItem("data", json);
+					if (showConsoleLog)
+						console.log("-\tJSON stored to local storage");
+				}
+			}
+			loadDefaultJSON();
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			if (showConsoleLog)
+				console.log("-\tCould not fetch JSON from server: ", textStatus, errorThrown);
+			loadDefaultJSON();
+		}
+	});
+}
+
+function loadDefaultJSON() {
+	if (showConsoleLog)
+		console.log("Loading default JSON...");
+	$.ajax({
+		dataType: "json",
+		url: DEFAULT_JSON_URL,
+		success: function(data) {
+			if (showConsoleLog)
+				console.log("-\tDefault JSON loaded, comparing...");
+			$(".ui-loader").hide();
+			if (instruction && instruction.version && data.version && parseFloat(instruction.version) >= parseFloat(data.version)) {
+				if (showConsoleLog)
+					console.log("-\tLocal storage is newer or the same as default");
+			}
+			else {
+				json = JSON.stringify(data);
+				if (localStorageReady) {
+					localStorage.setItem("data", json);
+					if (showConsoleLog)
+						console.log("-\tJSON stored to local storage");
+				}
+			}
+			MenuInit();
+		}
+	});
+}
+
+function MenuInit() {
+	if (showConsoleLog)
+		console.log("JSON loading finished");
+	showMenu();
+	populateUnit();
+	loadSearchResultBar($(".listBar"), instruction.question.length);
+	fillSearchResultBar($(".listBar"), -1);
 }
 
 function contentInit() {
@@ -322,8 +469,6 @@ function shuffle(sourceArray) {
 /* Quiz Interface Events */
 function quizInit() {
 	
-	hideMenu();
-	
 	/* Detect questions */
 	questionCount = $(".questions").length;
 	
@@ -361,11 +506,11 @@ function quizInit() {
 		"max": questionCount,
 		"fgColor": "#00e4ff"
 	});
-	$(".knob").unbind("change").on("change", function() {
+	$(".knob").off("change").on("change", function() {
 		$(".progressInfo").html(question.toString() + "/" + questionCount.toString());
 	});
 	
-	$(':mobile-pagecontainer').unbind("pagecontainershow").on("pagecontainershow", function(event, ui) {
+	$(':mobile-pagecontainer').off("pagecontainershow").on("pagecontainershow", function(event, ui) {
 		onQuestionSwitch(event, ui);
 	});
 	if (showConsoleLog)
@@ -375,7 +520,7 @@ function quizInit() {
 
 function nextQuestion() {
 	if (question < questionCount) {
-		if (switching)
+		if (switching || inMenu)
 			return;
 		else
 			switching = true;
@@ -389,7 +534,7 @@ function nextQuestion() {
 
 function prevQuestion() {
 	if (question > 1)  {
-		if (switching)
+		if (switching || inMenu)
 			return;
 		else
 			switching = true;
@@ -402,7 +547,7 @@ function prevQuestion() {
 }
 
 function onResize() {
-	$(".progressCircle").css("margin-left", $(window).width() * 0.5 - $(".progressCircle").width() * 0.5 + "px");
+	$(".progressCircle").css("margin-left", $(window).width() * 0.5 - $(".progressCircle").width() * 0.5 - parseInt($(".progressCircle").css("padding").replace("px", "")) + "px");
 }
 
 function onQuestionSwitch(event, ui) {
@@ -424,7 +569,8 @@ function onQuestionSwitch(event, ui) {
 }
 
 function switchQuestion() {
-	hideMenu();
+	if (inMenu)
+		hideMenu();
 	$(".knob").val(question).trigger("change");
 	if (question >= questionCount)
 		$(".nextPage").html("Result");
@@ -454,26 +600,8 @@ function switchQuestion() {
 }
 
 function eventInit() {
-	$(".answer").unbind("tap");
-	$(".submit").unbind("tap");
-	
-	$(".nextPage").unbind("tap").on("tap", function(e) {
-		e.preventDefault();
-		nextQuestion();
-	});
-	
-	$(".prevPage").unbind("tap").on("tap", function(e) {
-		e.preventDefault();
-		prevQuestion();
-	});
-	
-	$("body").unbind("swipeleft").on("swipeleft", function() {
-		nextQuestion();
-	});
-	
-	$("body").unbind("swiperight").on("swiperight", function() {
-		prevQuestion();
-	});
+	$(".answer").off("tap");
+	$(".submit").off("tap");
 	
 	$("#q" + question).find(".answer").on("tap", function(e) {
 		e.preventDefault();

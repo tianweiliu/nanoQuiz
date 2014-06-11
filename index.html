@@ -21,18 +21,27 @@
 <div data-role="page" id="settings">
 	<div class="content">
         <div class="range">
-        	<div class="rangeContent">
-            	<fieldset data-role="controlgroup" data-type="horizontal">
-            	<select name="unit" id="unit">
-                	<option value="any">Range</option>
-                </select>
-                <select name="from" id="from">
-                	<option value="any">From</option>
-                </select>
-                <select name="to" id="to">
-                	<option value="any">To</option>
-                </select>
-                </fieldset>
+        	<div class="rangeContent ui-grid-solo">
+                <div class="ui-block-a">
+                    <select name="unit" id="unit">
+                        <option value="any">All</option>
+                    </select>
+                    <div id="unit-selected" style="display:none">false</div>
+                </div>
+            </div>
+        	<div class="rangeContent ui-grid-a">
+            	<div class="ui-block-a">
+                    <select name="from" id="from">
+                        <option value="any">From</option>
+                    </select>
+                    <div id="from-selected" style="display:none">false</div>
+                </div>
+                <div class="ui-block-b">
+                    <select name="to" id="to">
+                        <option value="any">To</option>
+                    </select>
+                    <div id="to-selected" style="display:none">false</div>
+                </div>
                 <!--
                 <input class="rangeStr" type="text" value="Range of questions?" />
                 <span class="rangeFrom" style="display:none"></span>
@@ -58,7 +67,10 @@
                     <option value="on">On</option>
                 </select>
             </div>
-            <div class="clearfloat" id="searchResult"></div>
+            <div class="clearfloat"></div>
+        </div>
+        <div class="searchResult">
+        	<div class="listBar ui-shadow"></div>
         </div>
     </div>
 </div>
@@ -70,9 +82,9 @@
   </div>
   <div class="progressCircle">
     <div class="progressWrapper">
-      <input class="knob" data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 data-height=66 value="1" data-angleOffset="180" style="display:none;" />
+      <input class="knob" data-enhance=false data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 data-height=66 value="1" data-angleOffset="180" style="display:none;" />
       <!-- end .progressWrapper --></div>
-    <div class="progressInfo">5/10</div>
+    <div class="progressInfo"></div>
     <!-- end .progressCircle --></div>
   <!-- end .header --></div>
 <div class="footer ui-footer ui-footer-fixed ui-footer-fullscreen" ><!-- data-role="footer" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="footer" -->
@@ -81,11 +93,12 @@
   <!-- end .footer --></div>
 <script type="text/javascript">
 	$(document).ready(function() {
+		onReady();
 		onResize();
 		$(window).resize(function() {
         	onResize();
         });
-		loadJSON("data/data.json");
+		loadJSON("http://tianweiliu.net/nanoQuiz/data/");
     });
 </script>
 </body>

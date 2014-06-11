@@ -101,15 +101,8 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 #settings .content .range {
 	border-bottom: 1px solid #c7c7c7;
+	padding: 15px;
 }
-
-#settings .content .range .rangeContent {
-	padding:15px;
-}
-
-.ui-controlgroup-horizontal .ui-controlgroup-controls { width:100% }
-
-.ui-select { width:33% }
 
 #settings .content .toggleBar {
 	border-bottom: 1px solid #c7c7c7;
@@ -124,6 +117,30 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 #settings .content .toggleBar .toggle {
 	padding:15px;
 	float:right;
+}
+
+#settings .content .searchResult {
+	padding:15px;
+}
+
+#settings .content .searchResult .listBar {
+	overflow:hidden;
+	border-radius:7px;
+	-webkit-border-radius:7px;
+	border:1px solid #c7c7c7;
+	height:44px;
+	padding:0;
+}
+
+#settings .content .searchResult .listBar .chunkBar {
+	float:left;
+	height:44px;
+	border-right:1px solid #c7c7c7;
+}
+
+#settings .content .searchResult .listBar .filled {
+	background-color: #4cd964;/*#b2e8ff;*/
+	border-right:1px solid #3cc954;/*#a2d8ee;*/
 }
 
 .questions .content {
