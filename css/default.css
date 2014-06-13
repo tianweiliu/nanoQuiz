@@ -92,14 +92,16 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 .header .rightNav {
 	float:right;
+	padding-right:4px;
 }
 
-.header .rightNav .menuBtn {
+.header .rightNav div {
 	display:none;
+	float:right;
 	cursor:pointer;
-	margin:11px 15px 11px 0;
-	padding-right:30px;
+	margin:11px 11px 11px 0;
 	height:22px;
+	width:22px;
 }
 
 .header .rightNav .menu {
@@ -109,10 +111,29 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 }
 
 .header .rightNav .close {
-	background:url(../images/menu.png) no-repeat;
+	background:url(../images/close.png) no-repeat;
 	background-size:22px 22px;
 	background-position:right;
 }
+
+.header .rightNav .wrongList {
+	background:url(../images/wrongList.png) no-repeat;
+	background-size:22px 22px;
+	background-position:right;
+}
+
+.header .rightNav .notSaved {
+	background:url(../images/saved_outline.png) no-repeat;
+	background-size:22px 22px;
+	background-position:right;
+}
+
+.header .rightNav .saved {
+	background:url(../images/saved.png) no-repeat;
+	background-size:22px 22px;
+	background-position:right;
+}
+	
 
 /* ~~ This is the layout information. ~~ 
 

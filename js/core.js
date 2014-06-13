@@ -53,11 +53,9 @@ function onReady() {
 	$(".menuBtn").on("tap", function(e) {
         e.preventDefault();
 		if ($(this).hasClass("menu")) {
-			//$(this).removeClass("menu").addClass("close").html("Close");
 			$(':mobile-pagecontainer').pagecontainer( "change", "#settings", { transition: "slidedown" } );
 		}
 		else {
-			//$(this).removeClass("close").addClass("menu").html("Menu");
 			if (instruction)
 				window.history.back();
 		}
@@ -67,7 +65,7 @@ function onReady() {
 /* Menu Events */
 function showMenu() {
 	inMenu = true;
-	$(".menuBtn").removeClass("menu").addClass("close").html("Close");
+	$(".menuBtn").removeClass("menu").addClass("close");
 	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
 	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
 	$(".prevPage").hide();
@@ -76,11 +74,14 @@ function showMenu() {
 		if (contentInit())
 			quizInit();
 	});
+	$(".wrongList").hide();
+	$(".savedList").hide();
+	changeRange();
 }
 
 function hideMenu() {
 	inMenu = false;
-	$(".menuBtn").removeClass("close").addClass("menu").html("Menu").show();
+	$(".menuBtn").removeClass("close").addClass("menu").show();
 	$(".progressCircle").fadeIn("fast").animate({marginTop: "0px"}, "fast");
 	$(".start").off("tap").removeClass("start").addClass("nextPage").html("Next");
 	$(".nextPage").off("tap").on("tap", function(e) {
@@ -292,9 +293,20 @@ function loadJSON(url) {
 			}
 			
 			/* Load saved list */
-			savedList = localStorage.getItem("savedList");
-			if (!savedList)
+			//localStorage.setItem("savedList", null);
+			var savedListJSON = localStorage.getItem("savedList");
+			if (!savedListJSON)
 				savedList = new Array();
+			else {
+				try {
+					savedList = JSON.parse(savedListJSON);
+					if (!savedList)
+						savedList = new Array();
+				}
+				catch(e) {
+					savedList = new Array();
+				}
+			}
 		} 
 		else {
 			if (showConsoleLog)
@@ -693,6 +705,47 @@ function switchQuestion() {
 			$(".submit").show();
 		else
 			$(".submit").hide();
+			
+	$(".wrongList").hide();
+	$(".savedList").removeClass("saved").addClass("notSaved").show();
+	if ($("#q" + question).children(".content").attr("id")) {
+		if ($.inArray($("#q" + question).children(".content").attr("id"), wrongList) != -1) {
+			$(".wrongList").show().off("tap").on("tap", function(){
+				wrongList.splice($.inArray($("#q" + question).children(".content").attr("id"), wrongList), 1);
+				if (localStorageReady)
+					localStorage.setItem("wrongList", JSON.stringify(wrongList));
+				if (showConsoleLog)
+					console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" removed from wrong list");
+				$(this).hide();
+			});
+		}
+		$(".savedList").off("tap").on("tap", function() {
+			if ($(this).hasClass("notSaved")) {
+				savedList.push($("#q" + question).children(".content").attr("id"));
+				if (localStorageReady)
+					localStorage.setItem("savedList", JSON.stringify(savedList));
+				if (showConsoleLog)
+					console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" added to saved list");
+				$(this).removeClass("notSaved").addClass("saved");
+				return;
+			}
+			else if($(this).hasClass("saved")) {
+				savedList.splice($.inArray($("#q" + question).children(".content").attr("id"), savedList), 1);
+				if (localStorageReady)
+					localStorage.setItem("savedList", JSON.stringify(savedList));
+				if (showConsoleLog)
+					console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" removed from saved list");
+				$(this).removeClass("saved").addClass("notSaved");
+				return;
+			}
+		});
+		if ($.inArray($("#q" + question).children(".content").attr("id"), savedList) != -1) {
+			$(".savedList").removeClass("notSaved").addClass("saved");
+		}
+		else {
+			$(".savedList").removeClass("saved").addClass("notSaved");
+		}
+	}
 	eventInit();
 	/*
 	$(".selected").removeClass("selected");

@@ -42,11 +42,6 @@
           </select>
           <div id="to-selected" style="display:none">false</div>
         </div>
-        <!--
-                <input class="rangeStr" type="text" value="Range of questions?" />
-                <span class="rangeFrom" style="display:none"></span>
-                <span class="rangeTo" style="display:none"></span>
-                --> 
       </div>
     </div>
     <div class="toggleBar shuffleQuestion">
@@ -70,14 +65,14 @@
       <div class="clearfloat"></div>
     </div>
     <div class="filter">
-        <fieldset data-role="controlgroup" data-type="horizontal">
-            <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2a" value="all" checked="checked">
-            <label for="radio-choice-h-2a">All</label>
-            <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2b" value="wrong">
-            <label for="radio-choice-h-2b">Wrong</label>
-            <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2c" value="stored">
-            <label for="radio-choice-h-2c">Saved</label>
-        </fieldset>
+      <fieldset data-role="controlgroup" data-type="horizontal">
+        <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2a" value="all" checked="checked">
+        <label for="radio-choice-h-2a">All</label>
+        <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2b" value="wrong">
+        <label for="radio-choice-h-2b">Wrong</label>
+        <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2c" value="stored">
+        <label for="radio-choice-h-2c">Saved</label>
+      </fieldset>
     </div>
     <div class="searchResult">
       <div class="listBar ui-shadow"></div>
@@ -95,7 +90,9 @@
 <div class="header ui-header ui-header-fixed ui-header-fullscreen"><!--  data-role="header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="header" -->
   <div class="prevPage">Back</div>
   <div class="rightNav">
-    <div class="menuBtn close">Close </div>
+    <div class="menuBtn close"></div>
+    <div class="savedList notSaved"></div>
+    <div class="wrongList"></div>
   </div>
   <div class="progressCircle">
     <div class="progressWrapper">
