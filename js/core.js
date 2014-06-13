@@ -11,6 +11,8 @@ var selectCounter = {
 	"from": 0,
 	"to": 0
 }
+var wrongList;
+var savedList;
 	
 // Configuration variables
 var showConsoleLog = true;
@@ -20,6 +22,9 @@ var shuffleAnswer = false;
 // Envirnoment variables
 var switching = false;
 var inMenu = true;
+var localStorageReady = false;
+
+// Envirnoment constants
 const DEFAULT_JSON_URL = "data/data.json";
 
 function onReady() {
@@ -44,11 +49,25 @@ function onReady() {
 	$("#unit").on("change", populateSet);
 	$("#from").on("change", changeRange);
 	$("#to").on("change", changeRange);
+	$(".filter input").on("change", changeRange);
+	$(".menuBtn").on("tap", function(e) {
+        e.preventDefault();
+		if ($(this).hasClass("menu")) {
+			//$(this).removeClass("menu").addClass("close").html("Close");
+			$(':mobile-pagecontainer').pagecontainer( "change", "#settings", { transition: "slidedown" } );
+		}
+		else {
+			//$(this).removeClass("close").addClass("menu").html("Menu");
+			if (instruction)
+				window.history.back();
+		}
+    });
 }
 
 /* Menu Events */
 function showMenu() {
 	inMenu = true;
+	$(".menuBtn").removeClass("menu").addClass("close").html("Close");
 	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
 	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
 	$(".prevPage").hide();
@@ -61,6 +80,7 @@ function showMenu() {
 
 function hideMenu() {
 	inMenu = false;
+	$(".menuBtn").removeClass("close").addClass("menu").html("Menu").show();
 	$(".progressCircle").fadeIn("fast").animate({marginTop: "0px"}, "fast");
 	$(".start").off("tap").removeClass("start").addClass("nextPage").html("Next");
 	$(".nextPage").off("tap").on("tap", function(e) {
@@ -124,10 +144,12 @@ function populateSet() {
 function changeRange() {
 	var from = $("#from").val();
 	var to = $("#to").val();
+	loadJSON();
 	if (instruction.unit && ($("#unit").val() != "any") && (from != "any" || to != "any")) {
-		loadJSON();
 		if (showConsoleLog)
 			console.log("Searching questions (from: '" + $("#unit").val() + " " + from + "', to: '" + $("#unit").val() + " " + to + "')...");
+			
+		/* Search range type */
 		$.each(instruction.unit, function(unitIndex, unit) {
 			if (unit.name == $("#unit").val() && instruction.question && instruction.question.length > 0) {
 				if (showConsoleLog)
@@ -140,52 +162,74 @@ function changeRange() {
 					from = to;
 					to = temp;
 				}
+				/* Push all ids in selected group to lectureArray (aka baseUnitArray) */
 				$.each(unit.set, function(setIndex, set) {
 					if ((from == "any" || set.id >= parseInt(from)) && 
 						(to == "any" || set.id <= parseInt(to))) {
-							if (showConsoleLog)
-								console.log ("-\t-\t" + set.title + " found");
-							if (set.group && set.group.length > 0) {
-								$.each(set.group, function(lectureId, lecture) {
-									if ($.inArray(lecture, lectureArray) == -1) {
-										if (showConsoleLog)
-											console.log("-\t-\t-\tPushing " + lecture); 
-										lectureArray.push(lecture);
-									}
-								});
-							}
-					}
-				});
-				if (showConsoleLog)
-					console.log("Searching " + lectureArray.length + " lectures in " + instruction.question.length + " questions...");
-				var questionArray = new Array();
-				clearSearchResultBar($(".listBar"));
-				$.each(instruction.question, function(index, questionData) {
-					if (questionData.stamp && questionData.stamp.length > 0) {
-						$.each(questionData.stamp, function(stampIndex, stamp) {
-							if ($.inArray(stamp.id, lectureArray) != -1 && $.inArray(questionData, questionArray) == -1) {
-								questionArray.push(questionData);
-								fillSearchResultBar($(".listBar"), index);
-							}
-						});
-					}
-					/* If question does not have a stamp, put it in the list */
-					else {
-						if ($.inArray(questionData, questionArray) == -1) {
-							questionArray.push(questionData);
-							fillSearchResultBar($(".listBar"), index);
+						if (showConsoleLog)
+							console.log ("-\t-\t" + set.title + " found");
+						if (set.group && set.group.length > 0) {
+							$.each(set.group, function(lectureId, lecture) {
+								if ($.inArray(lecture, lectureArray) == -1) {
+									if (showConsoleLog)
+										console.log("-\t-\t-\tPushing " + lecture); 
+									lectureArray.push(lecture);
+								}
+							});
 						}
 					}
 				});
-				instruction.question = questionArray;
-				if (showConsoleLog)
-					console.log("-\tFound " + questionArray.length + " questions");
+				applyFilter(lectureArray);
 				return;
 			}
 		});
 	}
-	else
-		fillSearchResultBar($(".listBar"), -1);
+	else 
+		applyFilter();
+}
+
+function applyFilter(lectureArray) {
+	if (showConsoleLog) {
+		if (lectureArray)
+			console.log("Searching " + lectureArray.length + " lectures in " + instruction.question.length + " questions...");
+		else
+			console.log("Searching in " + instruction.question.length + " questions...");
+	}
+	var questionArray = new Array();
+	clearSearchResultBar($(".listBar"));
+	$.each(instruction.question, function(index, questionData) {
+		/* Apply to filter */
+		if (!questionData.id)
+			return true;
+		if ($("#radio-choice-h-2b").checkboxradio().is(":checked")) {
+			if ($.inArray(questionData.id, wrongList) == -1)
+				return true;
+		}
+		else if ($("#radio-choice-h-2c").is(":checked")) {
+			if ($.inArray(questionData.id, savedList) == -1)
+				return true;
+		}
+		
+		/* Apply to range */
+		if (questionData.stamp && questionData.stamp.length > 0) {
+			$.each(questionData.stamp, function(stampIndex, stamp) {
+				if ((!lectureArray || ($.inArray(stamp, lectureArray) != -1)) && ($.inArray(questionData, questionArray) == -1)) {
+					questionArray.push(questionData);
+					fillSearchResultBar($(".listBar"), index);
+				}
+			});
+		}
+		/* If question does not have a stamp, put it in the list */
+		else {
+			if ($.inArray(questionData, questionArray) == -1) {
+				questionArray.push(questionData);
+				fillSearchResultBar($(".listBar"), index);
+			}
+		}
+	});
+	instruction.question = questionArray;
+	if (showConsoleLog)
+		console.log("-\tFound " + questionArray.length + " questions");
 }
 
 function clearSearchResultBar($listBar) {
@@ -217,7 +261,6 @@ function loadJSON(url) {
 			console.log(" -------------------- ");
 		}
 		$(".ui-loader").show();
-		var localStorageReady = false;
 		if(typeof(Storage) !== "undefined") {
 			// Code for localStorage/sessionStorage.
 			if (showConsoleLog)
@@ -232,13 +275,33 @@ function loadJSON(url) {
 				if (showConsoleLog)
 					console.log("-\tNo data in local storage");
 			}
+			
+			/* Load wrong list */
+			var wrongListJSON = localStorage.getItem("wrongList");
+			if (!wrongListJSON)
+				wrongList = new Array();
+			else {
+				try {
+					wrongList = JSON.parse(wrongListJSON);
+					if (!wrongList)
+						wrongList = new Array();
+				}
+				catch(e) {
+					wrongList = new Array();
+				}
+			}
+			
+			/* Load saved list */
+			savedList = localStorage.getItem("savedList");
+			if (!savedList)
+				savedList = new Array();
 		} 
 		else {
 			if (showConsoleLog)
 				console.log("-\tLocal storage not supported");
 			localStorageReady = false;
 		}
-		loadRemoteJSON(url, localStorageReady);
+		loadDefaultJSON(url);
 	}
 	else if(json) {
 		instruction = JSON.parse(json);
@@ -247,7 +310,9 @@ function loadJSON(url) {
 	}
 }
 
-function loadRemoteJSON(url, localStorageReady) {
+function loadRemoteJSON(url) {
+	$(".checking").show();
+	$(".updateResult").hide();
 	if (showConsoleLog)
 		console.log("Loading JSON from server...");
 	$.ajax({
@@ -255,33 +320,57 @@ function loadRemoteJSON(url, localStorageReady) {
 		url: url,
 		jsonp: "callback",
 		success: function(data) {
+			$(".checking").hide();
 			if (showConsoleLog)
 				console.log("-\tRemote JSON loaded, comparing...");
 			//$(".ui-loader").hide();
 			if (instruction && instruction.version && data.version && parseFloat(instruction.version) >= parseFloat(data.version)) {
+				$refreshJSON = $("<a href='#'>Refresh</a>").on("tap", function(e) {
+					e.preventDefault();
+					loadRemoteJSON(url);
+				});
+				$(".updateResult").html("Up to date | ").append($refreshJSON).show();
 				if (showConsoleLog)
 					console.log("-\tLocal storage is newer or the same as remote");
 			}
 			else {
-				json = JSON.stringify(data);
-				instruction = data;
-				if (localStorageReady) {
-					localStorage.setItem("data", json);
-					if (showConsoleLog)
-						console.log("-\tJSON stored to local storage");
-				}
+				if (showConsoleLog)
+							console.log("-\tVersion " + data.version + " found on server");
+				$updateJSON = $("<a href='#'>Click here to update</a>").on("tap", function(e) {
+					e.preventDefault();
+					json = JSON.stringify(data);
+					instruction = data;
+					if (localStorageReady) {
+						localStorage.setItem("data", json);
+						if (showConsoleLog)
+							console.log("-\tJSON stored to local storage");
+					}
+					$refreshJSON = $("<a href='#'>Refresh</a>").on("tap", function(e) {
+						e.preventDefault();
+						loadRemoteJSON(url);
+					});
+					$(".updateResult").html("Up to date | ").append($refreshJSON).show();
+					MenuInit();
+				});
+				$(".updateResult").html($updateJSON).show();
 			}
-			loadDefaultJSON(localStorageReady);
+			//loadDefaultJSON();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
+			$(".checking").hide();
 			if (showConsoleLog)
 				console.log("-\tCould not fetch JSON from server: ", textStatus, errorThrown);
-			loadDefaultJSON();
+			$refreshJSON = $("<a href='#'>Refresh</a>").on("tap", function(e) {
+				e.preventDefault();
+				loadRemoteJSON(url);
+			});
+			$(".updateResult").html("Cannot connect to server | ").append($refreshJSON).show();
+			//loadDefaultJSON();
 		}
 	});
 }
 
-function loadDefaultJSON(localStorageReady) {
+function loadDefaultJSON(url) {
 	if (showConsoleLog)
 		console.log("Loading default JSON...");
 	$.ajax({
@@ -290,7 +379,6 @@ function loadDefaultJSON(localStorageReady) {
 		success: function(data) {
 			if (showConsoleLog)
 				console.log("-\tDefault JSON loaded, comparing...");
-			$(".ui-loader").hide();
 			if (instruction && instruction.version && data.version && parseFloat(instruction.version) >= parseFloat(data.version)) {
 				if (showConsoleLog)
 					console.log("-\tLocal storage is newer or the same as default");
@@ -305,11 +393,20 @@ function loadDefaultJSON(localStorageReady) {
 				}
 			}
 			MenuInit();
+			loadRemoteJSON(url);
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			if (showConsoleLog)
+				console.log("-\tCould not load default JSON: ", textStatus, errorThrown);
+			if (instruction)
+				MenuInit();
+			loadRemoteJSON(url);
 		}
 	});
 }
 
 function MenuInit() {
+	$(".ui-loader").hide();
 	if (showConsoleLog)
 		console.log("JSON loading finished");
 	showMenu();
@@ -319,7 +416,7 @@ function MenuInit() {
 }
 
 function contentInit() {
-	if (instruction.question) {
+	if (instruction && instruction.question) {
 		/* Remove old questions if any */
 		$(".questions").remove();
 		
@@ -342,7 +439,6 @@ function contentInit() {
 
 function loadQuestion(data) {
 	$.each(data, function(index, questionData) {
-		
 		if (showConsoleLog)
 			console.log("Loading question " + (index + 1) + "/" + data.length + " ...");
 		/* Create new questions HTML structure */
@@ -358,6 +454,9 @@ function loadContent(data, $questions) {
 	var $wrapper = $("<div></div>").addClass("content");
 	// Insert wrapper into page
 	$questions.append($wrapper);
+	// Assign question id
+	if (data.id)
+		$wrapper.attr("id", data.id);
 	if (data.vignette && data.vignette.length > 0) {
 		/* Create new question HTML structure */
 		var $question = $("<div></div>").addClass("question");
@@ -480,7 +579,6 @@ function quizInit() {
 	
 	/* Reset data variables */
 	question = 1;
-	instruction = null;
 	
 	$(".questions").each(function(index, element) {
 		$(this).find(".question").children(".bullet").html((index + 1).toString() + ".");
@@ -512,9 +610,7 @@ function quizInit() {
 		"max": questionCount,
 		"fgColor": "#00e4ff"
 	});
-	$(".knob").off("change").on("change", function() {
-		$(".progressInfo").html(question.toString() + "/" + questionCount.toString());
-	});
+	$(".knob").off("change", onKnobChange).on("change", onKnobChange);
 	
 	$(':mobile-pagecontainer').off("pagecontainershow").on("pagecontainershow", function(event, ui) {
 		onQuestionSwitch(event, ui);
@@ -522,6 +618,10 @@ function quizInit() {
 	if (showConsoleLog)
 		console.log("Initialization success\nSwitching to question " + question.toString() + " ...");
 	$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slideup"} );
+}
+
+function onKnobChange() {
+	$(".progressInfo").html(question.toString() + "/" + questionCount.toString());
 }
 
 function nextQuestion() {
@@ -546,7 +646,8 @@ function prevQuestion() {
 			switching = true;
 		if (showConsoleLog)
 			console.log("Switching to question " + (question - 1).toString() + " ...");
-		$(':mobile-pagecontainer').pagecontainer( "change", "#q" + (question - 1).toString(), { transition: "slide", reverse: "true"} );
+		window.history.back();
+		//$(':mobile-pagecontainer').pagecontainer( "change", "#q" + (question - 1).toString(), { transition: "slide", reverse: "true"} );
 	}
 	else
 		question = 1;
@@ -560,7 +661,7 @@ function onQuestionSwitch(event, ui) {
 	if ($(".ui-page-active")) {
 		var targetQuestion = $(".ui-page-active").attr("id");
 		if (targetQuestion == "settings") {
-			loadJSON();
+			//loadJSON();
 			showMenu();
 		}
 		else if (targetQuestion) {
@@ -678,6 +779,13 @@ function submitAnswer() {
 			"border-left-width": "1px"
 		});
 		$("#q" + question).find(".selected .mark").addClass("wrong").fadeIn("fast");
+		if ($("#q" + question).children(".content").attr("id") && $.inArray($("#q" + question).children(".content").attr("id"), wrongList) == -1) {
+			wrongList.push($("#q" + question).children(".content").attr("id"));
+			if (localStorageReady)
+				localStorage.setItem("wrongList", JSON.stringify(wrongList));
+			if (showConsoleLog)
+				console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" added to wrong list");
+		}
 	}
 }
 /* End of Quiz Interface Events */

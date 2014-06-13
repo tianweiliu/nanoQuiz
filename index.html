@@ -19,66 +19,83 @@
 
 <body>
 <div data-role="page" id="settings">
-	<div class="content">
-        <div class="range">
-        	<div class="rangeContent ui-grid-solo">
-                <div class="ui-block-a">
-                    <select name="unit" id="unit">
-                        <option value="any">All</option>
-                    </select>
-                    <div id="unit-selected" style="display:none">false</div>
-                </div>
-            </div>
-        	<div class="rangeContent ui-grid-a">
-            	<div class="ui-block-a">
-                    <select name="from" id="from">
-                        <option value="any">From</option>
-                    </select>
-                    <div id="from-selected" style="display:none">false</div>
-                </div>
-                <div class="ui-block-b">
-                    <select name="to" id="to">
-                        <option value="any">To</option>
-                    </select>
-                    <div id="to-selected" style="display:none">false</div>
-                </div>
-                <!--
+  <div class="content">
+    <div class="range">
+      <div class="rangeContent ui-grid-solo">
+        <div class="ui-block-a">
+          <select name="unit" id="unit">
+            <option value="any">All</option>
+          </select>
+          <div id="unit-selected" style="display:none">false</div>
+        </div>
+      </div>
+      <div class="rangeContent ui-grid-a">
+        <div class="ui-block-a">
+          <select name="from" id="from">
+            <option value="any">From</option>
+          </select>
+          <div id="from-selected" style="display:none">false</div>
+        </div>
+        <div class="ui-block-b">
+          <select name="to" id="to">
+            <option value="any">To</option>
+          </select>
+          <div id="to-selected" style="display:none">false</div>
+        </div>
+        <!--
                 <input class="rangeStr" type="text" value="Range of questions?" />
                 <span class="rangeFrom" style="display:none"></span>
                 <span class="rangeTo" style="display:none"></span>
-                -->
-            </div>
-        </div>
-        <div class="toggleBar shuffleQuestion">
-            <div class="label">Shuffle Questions</div>
-            <div class="toggle">
-                <select name="shuffleQuestionflip" id="shuffleQuestionflip" data-role="slider" data-theme="b">
-                    <option value="off">Off</option>
-                    <option value="on">On</option>
-                </select>
-            </div>
-            <div class="clearfloat"></div>
-        </div>
-        <div class="toggleBar shuffleAnswer">
-            <div class="label">Shuffle Answers</div>
-            <div class="toggle">
-                <select name="shuffleAnswerflip" id="shuffleAnswerflip" data-role="slider" data-theme="b">
-                    <option value="off">Off</option>
-                    <option value="on">On</option>
-                </select>
-            </div>
-            <div class="clearfloat"></div>
-        </div>
-        <div class="searchResult">
-        	<div class="listBar ui-shadow"></div>
-        </div>
+                --> 
+      </div>
     </div>
+    <div class="toggleBar shuffleQuestion">
+      <div class="label">Shuffle Questions</div>
+      <div class="toggle">
+        <select name="shuffleQuestionflip" id="shuffleQuestionflip" data-role="slider" data-theme="b">
+          <option value="off">Off</option>
+          <option value="on">On</option>
+        </select>
+      </div>
+      <div class="clearfloat"></div>
+    </div>
+    <div class="toggleBar shuffleAnswer">
+      <div class="label">Shuffle Answers</div>
+      <div class="toggle">
+        <select name="shuffleAnswerflip" id="shuffleAnswerflip" data-role="slider" data-theme="b">
+          <option value="off">Off</option>
+          <option value="on">On</option>
+        </select>
+      </div>
+      <div class="clearfloat"></div>
+    </div>
+    <div class="filter">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+            <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2a" value="all" checked="checked">
+            <label for="radio-choice-h-2a">All</label>
+            <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2b" value="wrong">
+            <label for="radio-choice-h-2b">Wrong</label>
+            <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2c" value="stored">
+            <label for="radio-choice-h-2c">Saved</label>
+        </fieldset>
+    </div>
+    <div class="searchResult">
+      <div class="listBar ui-shadow"></div>
+    </div>
+    <div class="updateInfo">
+      <div class="checking" style="display:none">
+        <div class="spinner"></div>
+        <div class="label">Checking for update...</div>
+      </div>
+      <div class="updateResult" style="display:none"></div>
+    </div>
+    <div class="clearfloat"></div>
+  </div>
 </div>
 <div class="header ui-header ui-header-fixed ui-header-fullscreen"><!--  data-role="header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="header" -->
   <div class="prevPage">Back</div>
   <div class="rightNav">
-  	<div class="menuBtn">
-    </div>
+    <div class="menuBtn close">Close </div>
   </div>
   <div class="progressCircle">
     <div class="progressWrapper">

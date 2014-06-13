@@ -1,5 +1,5 @@
 {
-	"version": "1.0",
+	"version": "1.1",
 	"unit": [
 		{
 			"name": "Lecture",
@@ -12,20 +12,13 @@
 					"id": "1",
 					"title": "Unit 1",
 					"group": [
-						"1.1", 
-						"1.2",
-						"1.3"
+						"1.01", 
+						"1.02",
+						"1.03",
+						"1.04",
+						"1.05",
+						"1.06"
 					]
-				},
-				{
-					"id": "2",
-					"title": "Unit 2",
-					"group": [
-						"2.1",
-						"2.2",
-						"2.3"
-					]
-
 				}
 			]
 		},
@@ -37,20 +30,13 @@
 					"id": "1",
 					"title": "Week 1",
 					"group": [
-						"1.1", 
-						"1.2",
-						"1.3"
+						"1.01", 
+						"1.02",
+						"1.03",
+						"1.04",
+						"1.05",
+						"1.06"
 					]
-				},
-				{
-					"id": "2",
-					"title": "Week 2",
-					"group": [
-						"2.1",
-						"2.2",
-						"2.3"
-					]
-
 				}
 			]
 		},
@@ -61,310 +47,280 @@
 					"id": "1",
 					"title": "Test 1",
 					"group": [
-						"1.1", 
-						"1.2",
-						"1.3"
+						"1.01", 
+						"1.02",
+						"1.03",
+						"1.04",
+						"1.05",
+						"1.06"
 					]
-				},
-				{
-					"id": "2",
-					"title": "Test 2",
-					"group": [
-						"2.1",
-						"2.2",
-						"2.3"
-					]
-
 				}
 			]
 		}
 	],
 	"question": [
 		{
+			"id": "Q01.01.1",
 			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "1.1"
-				}
+				"1.01"
 			],
 			"vignette": [
 				{
 					"type": "text",
-					"content": "In the H atom, is it possible to determine when the transition of an electron from one quantum state to another occurs?"
+					"content": "The laws of nature"
 				}
 			],
 			"answer": [
 				{
 					"type": "text",
 					"correct": false,
-					"content": "No, electrons are too small to be directly observed."
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "Yes, by measuring the temperature change of the atom when the transition occurs."
+					"content": "always agree with common sense"
 				},
 				{
 					"type": "text",
 					"correct": true,
-					"content": "Yes, by measuring the energy of a photon emitted when the transition occurs."
+					"content": "often have nothing to do with common sense"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "never agree with common sense"
 				}
 			]
 		},
 		{
+			"id": "Q01.01.2",
 			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "1.2"
-				}
+				"1.01"
 			],
 			"vignette": [
 				{
 					"type": "text",
-					"content": "The graph shows the intensity of blackbody radiation emitted from an object held at two temperatures. Which statement is true?"
+					"content": "The rise of what we often call “modern physics” began"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "in the late 1600s"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "in the late 1700s"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "in the late 1800s"
+				}
+			]
+		},
+		{
+			"id": "Q01.01.3",
+			"stamp": [
+				"1.01"
+			],
+			"vignette": [
+				{
+					"type": "text",
+					"content": "Which of the following statements is closest to being true?"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "Aristotle tended to emphasize experiment while Galileo tended to emphasize reason."
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "Both Aristotle and Galileo tended to emphasize reason over experiment."
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "Aristotle tended to emphasize reason while Galileo tended to emphasize experiment."
+				}
+			]
+		},
+		{
+			"id": "Q01.01.4",
+			"stamp": [
+				"1.01"
+			],
+			"vignette": [
+				{
+					"type": "text",
+					"content": "The US National Academy of Engineering is periodically tasked with identifying Grand Challenges in Engineering. Which of the following statements is closest to being true?"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": true,
+					"content": "Many of the challenging engineering problems identified by the US Academy will require quantum physics to solve."
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "None of the challenging engineering problems identified by the US Academy will require quantum physics to solve."
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "All of the challenging engineering problems identified by the US Academy will require quantum physics to solve."
+				}
+			]
+		},
+		{
+			"id": "Q01.02.1",
+			"stamp": [
+				"1.02"
+			],
+			"vignette": [
+				{
+					"type": "text",
+					"content": "The potential energy that a particle has at a point P in space"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": true,
+					"content": "measures the work required to move it to point P"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "goes to zero exponentially with time"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "depends on how fast you move it to point P"
+				}
+			]
+		},
+		{
+			"id": "Q01.02.2",
+			"stamp": [
+				"1.02"
+			],
+			"vignette": [
+				{
+					"type": "text",
+					"content": "Noether’s theorem states that"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "a change in kinetic energy of a mass is related to the work done on the mass"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "only changes in potential energy are relevant to predicting motion of a point mass"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "a conservation law implies an underlying symmetry"
+				}
+			]
+		},
+		{
+			"id": "Q01.02.3",
+			"stamp": [
+				"1.02"
+			],
+			"vignette": [
+				{
+					"type": "text",
+					"content": "An important property of wave motion is that"
+				}
+			],
+			"answer": [
+				{
+					"type": "text",
+					"correct": false,
+					"content": "two waves cannot be at the same place at the same time"
+				},
+				{
+					"type": "text",
+					"correct": true,
+					"content": "two waves can be at the same place at the same time"
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "two waves can be at the same place but at different times"
+				}
+			]
+		},
+		{
+			"id": "Q01.02.4",
+			"stamp": [
+				"1.02"
+			],
+			"vignette": [
+				{
+					"type": "text",
+					"content": "A negative charge is suspended above a uniform sheet of positive charge which has lateral dimensions L x L, as shown. The electrostatic potential energy will be a minimum when"
 				},
 				{
 					"type": "image",
-					"content": "data/q2/image1.png"
+					"content": "data/Q01.02.4/image1.png"
 				}
 			],
 			"answer": [
 				{
 					"type": "text",
+					"correct": false,
+					"content": "the negative charge is a large distance from the charged sheet "
+				},
+				{
+					"type": "text",
+					"correct": false,
+					"content": "the negative charge is at a fixed distance L from the charged sheet"
+				},
+				{
+					"type": "text",
 					"correct": true,
-					"content": "T<sub>2</sub> > T<sub>1</sub>"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "T<sub>1</sub> = T<sub>2</sub>"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "T<sub>1</sub> > T<sub>2</sub>"
+					"content": "the negative charge is as close as possible to the charged sheet "
 				}
 			]
 		},
 		{
+			"id": "Q01.02.5",
 			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "1.3"
-				}
+				"1.02"
 			],
 			"vignette": [
 				{
 					"type": "text",
-					"content": "A negative charge is suspended above a uniform sheet of positive charge. The electrostatic potential energy will be a minimum when"
-				},
-				{
-					"type": "image",
-					"content": "data/q3/image1.png"
+					"content": "Wave motion is"
 				}
 			],
 			"answer": [
 				{
 					"type": "text",
 					"correct": false,
-					"content": "the negative charge is a large distance from the charged sheet"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "the negative charge is at a fixed distance from the charged sheet"
+					"content": "described by a first order differential equation"
 				},
 				{
 					"type": "text",
 					"correct": true,
-					"content": "the negative charge is as close as possible to the charged sheet"
-				}
-			]
-		},
-		{
-			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "2.1"
-				}
-			],
-			"vignette": [
-				{
-					"type": "text",
-					"content": "Two charges of opposite polarity are suspended above two uniform sheets of positive charge as shown. When will the electrostatic potential energy of the system of charges as shown take on a minimum value?"
-				},
-				{
-					"type": "image",
-					"content": "data/q4/image1.png"
-				}
-			],
-			"answer": [
-				{
-					"type": "text",
-					"correct": false,
-					"content": "when r1→∞, r2→0"
+					"content": "described by a second order differential equation"
 				},
 				{
 					"type": "text",
 					"correct": false,
-					"content": "when r1=r2"
-				},
-				{
-					"type": "text",
-					"correct": true,
-					"content": "when r1→0, r2→∞"
-				}
-			]
-		},
-		{
-			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "2.2"
-				}
-			],
-			"vignette": [
-				{
-					"type": "text",
-					"content": "Even through a wave does not result in a bulk transport of matter, it can transfer energy and momentum."
-				}
-			],
-			"answer": [
-				{
-					"type": "text",
-					"correct": true,
-					"content": "True"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "False"
-				}
-			]
-		},
-		{
-			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "2.3"
-				}
-			],
-			"vignette": [
-				{
-					"type": "text",
-					"content": "Can two waves be in the same place at the same time?"
-				}
-			],
-			"answer": [
-				{
-					"type": "text",
-					"correct": true,
-					"content": "Yes"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "No"
-				}
-			]
-		},
-		{
-			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "3.1"
-				}
-			],
-			"vignette": [
-				{
-					"type": "text",
-					"content": "The rms value of a sine wave V(t)=Vosin(ωt) with a period T is defined by which equation?"
-				}
-			],
-			"sprite": {
-				"content": "data/q7/a.png"
-			},
-			"answer": [
-				{
-					"type": "sprite",
-					"correct": false,
-					"content": "1of3"
-				},
-				{
-					"type": "sprite",
-					"correct": true,
-					"content": "2of3"
-				},
-				{
-					"type": "sprite",
-					"correct": false,
-					"content": "3of3"
-				}
-			]
-		},
-		{
-			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "3.2"
-				}
-			],
-			"vignette": [
-				{
-					"type": "text",
-					"content": "A snapshot of the electric field of an EM wave is shown. What is the wavelength of this EM wave?"
-				},
-				{
-					"type": "image",
-					"content": "data/q8/image1.png"
-				}
-			],
-			"answer": [
-				{
-					"type": "text",
-					"correct": false,
-					"content": "0.05 m"
-				},
-				{
-					"type": "text",
-					"correct": true,
-					"content": "0.10 m"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "0.15 m"
-				}
-			]
-		},
-		{
-			"stamp": [
-				{
-					"type": "Lecture",
-					"id": "3.3"
-				}
-			],
-			"vignette": [
-				{
-					"type": "text",
-					"content": "The prefix ‘nano’ is derived from the Greek word ‘νανοσ’ which means"
-				}
-			],
-			"answer": [
-				{
-					"type": "text",
-					"correct": false,
-					"content": "a small coin"
-				},
-				{
-					"type": "text",
-					"correct": true,
-					"content": "a dwarf"
-				},
-				{
-					"type": "text",
-					"correct": false,
-					"content": "a small city just south of Athens in Greece"
+					"content": "described by a third order differential equation"
 				}
 			]
 		}
