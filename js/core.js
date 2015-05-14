@@ -102,10 +102,10 @@ function populateUnit() {
 		lastTo = "any";
 		$.each(instruction.unit, function(index, value) {
 			if (!value.base) {
-				$unit = $("<option></option>").attr("name", value.name).attr("value", value.name).html(value.name);
+				$unit = $("<option></option>").attr("name", value.name).attr("value", value.id).html(value.name);
 				$("#unit").append($unit);
 				if (value.default) {
-					$("#unit").val(value.name);
+					$("#unit").val(value.id);
 				}
 			}
 		});
@@ -114,7 +114,7 @@ function populateUnit() {
 }
 
 function populateSet() {
-	if (instruction.unit) {
+	if (instruction.unit && instruction.unit.length > 0 && instruction.question && instruction.question.length > 0) {
 		if ($("#from").val() != "any")
 			lastFrom = $("#from").val();
 		if ($("#to").val() != "any")
@@ -124,75 +124,98 @@ function populateSet() {
 		$("#from").children("[value!='any']").remove();
 		$("#to").children("[value!='any']").remove();
 		$.each(instruction.unit, function(index, value) {
-			if (!value.base && value.name == $("#unit").val() && value.set) {
-				$.each(value.set, function(i, set) {
-					$fromSet = $("<option></option>").attr("name", set.id).attr("value", set.id).html(set.id);
+			//Find selected unit type
+			if (!value.base && value.id == $("#unit").val()) {
+				if (showConsoleLog)
+					console.log("Calculating range of unit type: " + value.id);
+				var unitStartIndex = -1;
+				var unitLastIndex = -1;
+				$.each(instruction.question, function(qIndex, qValue) {
+					if (qValue[value.id] != undefined) {
+						//Question contains this unit type
+						/*
+						if (showConsoleLog)
+							console.log("-\tQuestion ('" + qValue.id + "') contains unit type ('" + value.id + "'), value: " + qValue[value.id]);
+						*/
+						if (qValue[value.id] < unitStartIndex || unitStartIndex == -1)
+							unitStartIndex = qValue[value.id];
+						if (qValue[value.id] > unitLastIndex || unitLastIndex == -1)
+							unitLastIndex = qValue[value.id];
+					}
+				});
+				if (showConsoleLog)
+					console.log("-\tFrom " + unitStartIndex + " to " + unitLastIndex);
+				for (var i = unitStartIndex; i <= unitLastIndex; i++) {
+					$fromSet = $("<option></option>").attr("name", i).attr("value", i).html(i);
 					$toSet = $fromSet.clone();
 					$("#from").append($fromSet);
 					$("#to").append($toSet);
-					if (set.id == lastFrom)
+					if (i == lastFrom)
 						$("#from").val(lastFrom);
-					if (set.id == lastTo)
+					if (i == lastTo)
 						$("#to").val(lastTo);
-				});
+				}
+				return false;
 			}
 		});
 		$("#from").trigger("change");
 		$("#to").trigger("change");
 	}
+	else if(showConsoleLog) {
+		console.error("Invalid json, populateSet abort.");
+	}
 }
 
 function changeRange() {
+	var unitType = $("#unit").val();
 	var from = $("#from").val();
 	var to = $("#to").val();
 	loadJSON();
-	if (instruction.unit && ($("#unit").val() != "any") && (from != "any" || to != "any")) {
+	if (instruction.question && instruction.question.length > 0 && ($("#unit").val() != "any") && (from != "any" || to != "any")) {
 		if (showConsoleLog)
 			console.log("Searching questions (from: '" + $("#unit").val() + " " + from + "', to: '" + $("#unit").val() + " " + to + "')...");
-			
-		/* Search range type */
-		$.each(instruction.unit, function(unitIndex, unit) {
-			if (unit.name == $("#unit").val() && instruction.question && instruction.question.length > 0) {
-				if (showConsoleLog)
-					console.log("-\tUnit type (name: '" + unit.name + "') found");
-				var lectureArray = new Array();
-					if (showConsoleLog)
-				console.log("-\tSearching in " + unit.set.length + " sets...");
-				if (from != "any" && to != "any" && parseInt(from) > parseInt(to)) {
-					var temp = from;
-					from = to;
-					to = temp;
+		if (from != "any" && to != "any" && parseInt(from) > parseInt(to)) {
+			var temp = from;
+			from = to;
+			to = temp;
+		}
+		var questionList = new Array();
+		/* Search selected range in all questions */
+		$.each(instruction.question, function(qIndex, qValue) {
+			if (showConsoleLog) {
+				console.log("-\tQuestion: " + qValue.id);
+			}
+			if (qValue[unitType] != undefined) {
+				//Question contains this unit type
+				if (showConsoleLog) {
+					console.log("-\t-\tUnit type ('" + unitType + "') found");
 				}
-				/* Push all ids in selected group to lectureArray (aka baseUnitArray) */
-				$.each(unit.set, function(setIndex, set) {
-					if ((from == "any" || set.id >= parseInt(from)) && 
-						(to == "any" || set.id <= parseInt(to))) {
+				$.each(qValue[unitType], function(unitIndex, unitValue) {
+					if ((from == "any" || unitValue >= parseInt(from)) && 
+						(to == "any" || unitValue <= parseInt(to))) {
+						//Question in selected range
 						if (showConsoleLog)
-							console.log ("-\t-\t" + set.title + " found");
-						if (set.group && set.group.length > 0) {
-							$.each(set.group, function(lectureId, lecture) {
-								if ($.inArray(lecture, lectureArray) == -1) {
-									if (showConsoleLog)
-										console.log("-\t-\t-\tPushing " + lecture); 
-									lectureArray.push(lecture);
-								}
-							});
+							console.log ("-\t-\tQuestion in range")
+						if ($.inArray(qValue.id, questionList) == -1) {
+							if (showConsoleLog)
+								console.log("-\t-\tPushing " + qValue.id); 
+							questionList.push(qValue.id);
 						}
+						return false;
 					}
 				});
-				applyFilter(lectureArray);
-				return;
 			}
 		});
+		applyFilter(questionList);
 	}
 	else 
 		applyFilter();
 }
 
-function applyFilter(lectureArray) {
+function applyFilter(questionList) {
 	if (showConsoleLog) {
-		if (lectureArray)
-			console.log("Searching " + lectureArray.length + " lectures in " + instruction.question.length + " questions...");
+		if (questionList)
+			console.log("Searching " + questionList.length + " lectures in " + instruction.question.length + " questions...");
 		else
 			console.log("Searching in " + instruction.question.length + " questions...");
 	}
@@ -212,20 +235,9 @@ function applyFilter(lectureArray) {
 		}
 		
 		/* Apply to range */
-		if (questionData.stamp && questionData.stamp.length > 0) {
-			$.each(questionData.stamp, function(stampIndex, stamp) {
-				if ((!lectureArray || ($.inArray(stamp, lectureArray) != -1)) && ($.inArray(questionData, questionArray) == -1)) {
-					questionArray.push(questionData);
-					fillSearchResultBar($(".listBar"), index);
-				}
-			});
-		}
-		/* If question does not have a stamp, put it in the list */
-		else {
-			if ($.inArray(questionData, questionArray) == -1) {
-				questionArray.push(questionData);
-				fillSearchResultBar($(".listBar"), index);
-			}
+		if (!questionList || ($.inArray(questionData.id, questionList) != -1) && ($.inArray(questionData, questionArray) == -1)) {
+			questionArray.push(questionData);
+			fillSearchResultBar($(".listBar"), index);
 		}
 	});
 	instruction.question = questionArray;
@@ -258,7 +270,7 @@ function loadJSON(url) {
 		if (showConsoleLog) {
 			console.log(" -------------------- ");
 			console.log("|  nanoHUB Quiz Core |");
-			console.log("|    1.0 by David    |");
+			console.log("|    1.1 by David    |");
 			console.log(" -------------------- ");
 		}
 		$(".ui-loader").show();

@@ -1,68 +1,39 @@
 {
-	"version": "1.1",
+	"version": "1.2",
 	"unit": [
 		{
+			"id": "lecture",
 			"name": "Lecture",
 			"base": true
 		},
 		{
-			"name": "Unit",
-			"set": [
-				{
-					"id": "1",
-					"title": "Unit 1",
-					"group": [
-						"1.01", 
-						"1.02",
-						"1.03",
-						"1.04",
-						"1.05",
-						"1.06"
-					]
-				}
-			]
+			"id": "unit",
+			"name": "Unit"
 		},
 		{
+			"id": "week",
 			"name": "Week",
-			"default": true,
-			"set": [
-				{
-					"id": "1",
-					"title": "Week 1",
-					"group": [
-						"1.01", 
-						"1.02",
-						"1.03",
-						"1.04",
-						"1.05",
-						"1.06"
-					]
-				}
-			]
+			"default": true
 		},
 		{
-			"name": "Test",
-			"set": [
-				{
-					"id": "1",
-					"title": "Test 1",
-					"group": [
-						"1.01", 
-						"1.02",
-						"1.03",
-						"1.04",
-						"1.05",
-						"1.06"
-					]
-				}
-			]
+			"id": "test",
+			"name": "Test"
 		}
 	],
 	"question": [
 		{
 			"id": "Q01.01.1",
-			"stamp": [
-				"1.01"
+			"lecture": [
+				1
+			],
+			"unit": [
+				1
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -90,8 +61,17 @@
 		},
 		{
 			"id": "Q01.01.2",
-			"stamp": [
-				"1.01"
+			"lecture": [
+				1
+			],
+			"unit": [
+				1
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -119,8 +99,17 @@
 		},
 		{
 			"id": "Q01.01.3",
-			"stamp": [
-				"1.01"
+			"lecture": [
+				1
+			],
+			"unit": [
+				1
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -148,8 +137,17 @@
 		},
 		{
 			"id": "Q01.01.4",
-			"stamp": [
-				"1.01"
+			"lecture": [
+				1
+			],
+			"unit": [
+				1
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -177,8 +175,17 @@
 		},
 		{
 			"id": "Q01.02.1",
-			"stamp": [
-				"1.02"
+			"lecture": [
+				2
+			],
+			"unit": [
+				2
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -206,8 +213,17 @@
 		},
 		{
 			"id": "Q01.02.2",
-			"stamp": [
-				"1.02"
+			"lecture": [
+				2
+			],
+			"unit": [
+				2
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -235,8 +251,17 @@
 		},
 		{
 			"id": "Q01.02.3",
-			"stamp": [
-				"1.02"
+			"lecture": [
+				2
+			],
+			"unit": [
+				2
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -264,8 +289,17 @@
 		},
 		{
 			"id": "Q01.02.4",
-			"stamp": [
-				"1.02"
+			"lecture": [
+				2
+			],
+			"unit": [
+				2
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
@@ -297,8 +331,17 @@
 		},
 		{
 			"id": "Q01.02.5",
-			"stamp": [
-				"1.02"
+			"lecture": [
+				2
+			],
+			"unit": [
+				2
+			],
+			"week": [
+				1
+			],
+			"test": [
+				1
 			],
 			"vignette": [
 				{
