@@ -215,7 +215,7 @@ function changeRange() {
 function applyFilter(questionList) {
 	if (showConsoleLog) {
 		if (questionList)
-			console.log("Searching " + questionList.length + " lectures in " + instruction.question.length + " questions...");
+			console.log("Retrieving " + questionList.length + " questions in " + instruction.question.length + " questions...");
 		else
 			console.log("Searching in " + instruction.question.length + " questions...");
 	}
@@ -496,7 +496,7 @@ function loadContent(data, $questions) {
 		var $answers = $("<div></div>").addClass("answers");
 		$wrapper.append($answers);
 		if (data.sprite) {
-			var $sprite = $("<img />").addClass("answerImage").attr("alt", "answer").attr("src", data.sprite.content);
+			var $sprite = $("<img />").addClass("answerImage").attr("alt", "answer").attr("src", "data/" + data.sprite.content);
 			$answers.append($sprite);
 		}
 		var $answersUL = $("<ul></ul>");
@@ -530,7 +530,7 @@ function loadVignette(data, $question) {
 					var $vignette = $("<div></div>").addClass("graph");
 					var $image = $("<img />").attr("alt", "graph");
 					if (nodeData.content)
-						$image.attr("src", nodeData.content);
+						$image.attr("src", "data/" + nodeData.content);
 					$vignette.append($image);
 					$question.append($vignette);
 				break;
@@ -616,7 +616,7 @@ function quizInit() {
 			$(sprite).parent("div").find(".answerSprite").each(function(index, element) {
 				if ($(this).attr("id")) {
 					var i = $(this).attr("id").substr(0, 1);
-					var c = $(this).attr("id").substr(3);
+					var c = $(this).attr("id").substr(2);
 					$(this).css({
 						"background-image": "url(" + $(tmpImg).attr("src") + ")",
 						"background-position": "0 " + ((1 - i) / c * tmpImg.height) + "px",
