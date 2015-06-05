@@ -479,8 +479,11 @@ function loadContent(data, $questions) {
 	// Insert wrapper into page
 	$questions.append($wrapper);
 	// Assign question id
-	if (data.id)
+	if (data.id) {
 		$wrapper.attr("id", data.id);
+		var $questionId = $("<div></div>").addClass("questionId").text(data.id);
+		$wrapper.append($questionId);
+	}
 	if (data.vignette && data.vignette.length > 0) {
 		/* Create new question HTML structure */
 		var $question = $("<div></div>").addClass("question");
@@ -670,8 +673,8 @@ function prevQuestion() {
 			switching = true;
 		if (showConsoleLog)
 			console.log("Switching to question " + (question - 1).toString() + " ...");
-		window.history.back();
-		//$(':mobile-pagecontainer').pagecontainer( "change", "#q" + (question - 1).toString(), { transition: "slide", reverse: "true"} );
+		//window.history.back();
+		$(':mobile-pagecontainer').pagecontainer( "change", "#q" + (question - 1).toString(), { transition: "slide", reverse: "true"} );
 	}
 	else
 		question = 1;
@@ -714,9 +717,11 @@ function switchQuestion() {
 	else
 		$(".prevPage").show();
 	if ($("#q" + question).find(".selected").length > 0 && $("#q" + question).find(".locked").length == 0) 
-			$(".submit").show();
-		else
-			$(".submit").hide();
+		$(".submit").text("Submit").show();
+	else if($("#q" + question).find(".locked").length > 0)
+		$(".submit").text("Next").show();
+	else
+		$(".submit").hide();
 			
 	$(".wrongList").hide();
 	$(".savedList").removeClass("saved").addClass("notSaved").show();
@@ -783,7 +788,10 @@ function eventInit() {
 	/* When submit is clicked */
 	$(".submit").on("tap", function(e) {
 		e.preventDefault();
-		submitAnswer();
+		if ($(this).text() == "Next")
+			nextQuestion();
+		else
+			submitAnswer();
 	});
 }
 
@@ -801,8 +809,10 @@ function chooseAnswer($answer) {
 		$answer.children(".answerList").addClass("selected");
 		
 		/* Show / Hide submit button */
-		if ($("#q" + question).find(".selected").length > 0) 
-			$(".submit").show();
+		if ($("#q" + question).find(".selected").length > 0 && $("#q" + question).find(".locked").length == 0) 
+			$(".submit").text("Submit").show();
+		else if($("#q" + question).find(".locked").length > 0)
+			$(".submit").text("Next").show();
 		else
 			$(".submit").hide();
 	}
@@ -819,7 +829,7 @@ function quickSubmit($answer) {
 
 function submitAnswer() {
 	$("#q" + question).find(".answer").addClass("locked");
-	$(".submit").hide();
+	$(".submit").text("Next");
 	if (question >= questionCount) 
 		$(".nextPage").html("Result");
 	else

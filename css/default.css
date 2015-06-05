@@ -1,7 +1,6 @@
 @charset "UTF-8";
 
 body {
-	background-color:#f9f9f9;
 	font-family:-apple-system-font, Helvetica Neue;
 }
 
@@ -58,6 +57,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	height:66px;
 	width:66px;
 	padding:7px;
+	margin:0 auto;
 }
 
 .progressCircle .progressWrapper {
@@ -229,6 +229,13 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 /* ~~ This grouped selector gives the lists in the .content area space ~~ */
 .content ul, .content ol { 
 	padding: 0; /* this padding mirrors the right padding in the headings and paragraph rule above. Padding was placed on the bottom for space between other elements on the lists and on the left to create the indention. These may be adjusted as you wish. */
+}
+
+.content .questionId {
+	font-size:10.5px;
+	color:#6C6C6C;
+	padding-right:12px;
+	text-align:right;
 }
 
 .content .question {
