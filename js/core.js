@@ -237,7 +237,13 @@ function applyFilter(questionList) {
 		/* Apply to range */
 		if (!questionList || ($.inArray(questionData.id, questionList) != -1) && ($.inArray(questionData, questionArray) == -1)) {
 			questionArray.push(questionData);
-			fillSearchResultBar($(".listBar"), index);
+			if ($.inArray(questionData.id, wrongList) != -1)
+				fillSearchResultBar($(".listBar"), index, "wrong");
+			else if ($.inArray(questionData.id, savedList) != -1)
+				fillSearchResultBar($(".listBar"), index, "saved");
+			else
+				fillSearchResultBar($(".listBar"), index, "filled");
+
 		}
 	});
 	instruction.question = questionArray;
@@ -246,14 +252,14 @@ function applyFilter(questionList) {
 }
 
 function clearSearchResultBar($listBar) {
-	$listBar.children(".chunkBar").removeClass("filled");
+	$listBar.children(".chunkBar").removeClass("filled").removeClass("saved").removeClass("wrong");
 }
 
-function fillSearchResultBar($listBar, index) {
+function fillSearchResultBar($listBar, index, barClass) {
 	if (index < 0 || index > $listBar.children(".chunkBar").length)
-		$listBar.children(".chunkBar").addClass("filled");
+		$listBar.children(".chunkBar").addClass(barClass);
 	else
-		$($listBar.children(".chunkBar")[index]).addClass("filled");
+		$($listBar.children(".chunkBar")[index]).addClass(barClass);
 }
 
 function loadSearchResultBar($listBar, chunkCount) {
@@ -322,7 +328,7 @@ function loadJSON(url) {
 		} 
 		else {
 			if (showConsoleLog)
-				console.log("-\tLocal storage not supported");
+				console.warn("-\tLocal storage not supported");
 			localStorageReady = false;
 		}
 		loadDefaultJSON(url);
@@ -359,7 +365,7 @@ function loadRemoteJSON(url) {
 			}
 			else {
 				if (showConsoleLog)
-							console.log("-\tVersion " + data.version + " found on server");
+					console.log("-\tVersion " + data.version + " found on server");
 				$updateJSON = $("<a href='#'>Click here to update</a>").on("tap", function(e) {
 					e.preventDefault();
 					json = JSON.stringify(data);
@@ -383,7 +389,7 @@ function loadRemoteJSON(url) {
 		error: function(jqXHR, textStatus, errorThrown) {
 			$(".checking").hide();
 			if (showConsoleLog)
-				console.log("-\tCould not fetch JSON from server: ", textStatus, errorThrown);
+				console.warn("-\tCould not fetch JSON from server: ", textStatus, errorThrown);
 			$refreshJSON = $("<a href='#'>Refresh</a>").on("tap", function(e) {
 				e.preventDefault();
 				loadRemoteJSON(url);
@@ -421,9 +427,11 @@ function loadDefaultJSON(url) {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			if (showConsoleLog)
-				console.log("-\tCould not load default JSON: ", textStatus, errorThrown);
+				console.error("-\tCould not load default JSON: ", textStatus, errorThrown);
 			if (instruction)
 				MenuInit();
+			else
+				$(".updateResult").html("Cannot load instructions | ").append($refreshJSON).show();
 			loadRemoteJSON(url);
 		}
 	});
@@ -436,7 +444,14 @@ function MenuInit() {
 	showMenu();
 	populateUnit();
 	loadSearchResultBar($(".listBar"), instruction.question.length);
-	fillSearchResultBar($(".listBar"), -1);
+	$.each(instruction.question, function(index, questionData) {
+		if ($.inArray(questionData.id, wrongList) != -1)
+			fillSearchResultBar($(".listBar"), index, "wrong");
+		else if ($.inArray(questionData.id, savedList) != -1)
+			fillSearchResultBar($(".listBar"), index, "saved");
+		else
+			fillSearchResultBar($(".listBar"), index, "filled");
+	});
 }
 
 function contentInit() {
