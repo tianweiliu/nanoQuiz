@@ -7,23 +7,41 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <title>nanoQuiz</title>
-<link href="css/jquery.mobile-1.4.2.min.css" rel="stylesheet" type="text/css" />
+<link href="css/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css" />
 <link href="css/nanoQuiz.min.css" rel="stylesheet" type="text/css" />
 <link href="css/default.css" rel="stylesheet" type="text/css" />
-<script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script src="js/jquery-2.1.4.min.js" type="text/javascript"></script>
 <!--script src="http://code.jquery.com/mobile/git/jquery.mobile-git.js" type="text/javascript"></script-->
-<script src="js/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 <script src="js/jquery.knob.js" type="text/javascript"></script>
 <script src="js/core.js" type="text/javascript"></script>
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+</script>
+<!-- End Google Analytics -->
 </head>
 
 <body>
+<!-- Landing Page -->
 <div data-role="page" id="welcome">
   <div class="content">
+  	<div class="bannerWrapper">
+  		<img class="banner" />
+  	</div>
     <div class="title"></div>
     <div class="subtitle"></div>
+    <div class="department"></div>
+    <div class="schoolLogo"><img class="school" /></div>
+    <div class="support"><span class="supportLabel">Support: </span><a class="supportLink"></a></div>
+    <div class="nanoQuiz"></div>
   </div>
 </div>
+<!-- End Landing Page -->
+<!-- Menu Page -->
 <div data-role="page" id="settings">
   <div class="content">
     <div class="range">
@@ -83,6 +101,19 @@
     <div class="searchResult">
       <div class="listBar ui-shadow"></div>
     </div>
+    <div class="analytics" style="display:none">
+      <div class="toggleBar toggleAnalytics">
+        <div class="label">Send anonymous analytics data</div>
+        <div class="toggle">
+          <select name="analyticsFlip" id="analyticsFlip" data-role="slider" data-theme="b">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+          </select>
+        </div>
+        <div class="clearfloat"></div>
+      </div>
+    </div>
+    <div class="questionList"></div>
     <div class="updateInfo">
       <div class="checking" style="display:none">
         <div class="spinner"></div>
@@ -93,6 +124,29 @@
     <div class="clearfloat"></div>
   </div>
 </div>
+<!-- End Menu Page -->
+<!-- Result Page -->
+<div data-role="page" id="result">
+	<div class="score">
+		<span class="scoreLabel">Your score is: </span>
+		<span class="scoreVal"></span>
+	</div>
+	<div class="chart"></div>
+	<div class="info"></div>
+</div>
+<!-- End Result Page -->
+<!-- Popup -->
+<div data-role="popup" id="removeFromWrongList" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all ui-popup ui-body-c ui-overlay-shadow" data-shadow="true" data-corners="true">
+	<div data-role="header" data-theme="a" class="ui-corner-top ui-header ui-bar-a" role="banner">
+		<h1 class="ui-title" role="heading">Remove from list?</h1>
+	</div>
+	<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-body-d" role="main">
+		<h3 class="ui-title">Are you sure you want to remove this question from list of questions you answered wrong?</h3>
+		<a href="#" id="cancelRemoveFromWrongList" data-role="button" data-inline="true" data-theme="c" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Cancel</span></span></a>    
+		<a href="#" id="confirmRemoveFromWrongList" data-role="button" data-inline="true" data-theme="b" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Delete</span></span></a>  
+	</div>
+</div>
+<!-- End Popup -->
 <div class="header ui-header ui-header-fixed ui-header-fullscreen"><!--  data-role="header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="header" -->
   <div class="prevPage">Back</div>
   <div class="rightNav">
@@ -103,22 +157,21 @@
   <div class="progressCircle">
     <div class="progressWrapper">
       <input class="knob" data-enhance=false data-displayInput=false data-thickness=.05 data-readOnly=true data-width=66 data-height=66 value="1" data-angleOffset="180" style="display:none;" />
-      <!-- end .progressWrapper --></div>
+    <!-- end .progressWrapper --></div>
     <div class="progressInfo"></div>
-    <!-- end .progressCircle --></div>
-  <!-- end .header --></div>
+  <!-- end .progressCircle --></div>
+<!-- end .header --></div>
 <div class="footer ui-footer ui-footer-fixed ui-footer-fullscreen" ><!-- data-role="footer" data-position="fixed" data-fullscreen="true" data-tap-toggle="false" data-theme="a" data-id="footer" -->
   <div class="submit">Submit</div>
   <div class="forward">Start</div>
-  <!-- end .footer --></div>
+<!-- end .footer --></div>
 <script type="text/javascript">
 	$(document).ready(function() {
-		onReady();
 		onResize();
 		$(window).resize(function() {
         	onResize();
         });
-		loadJSON("http://tianweiliu.net/nanoQuiz/data/");
+		loadPackage();
     });
 </script>
 </body>

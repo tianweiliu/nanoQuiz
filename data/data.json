@@ -1,9 +1,5 @@
 {
 	"version": "1.2",
-	"title": "PHYS 342",
-	"subtitle": "Modern Physics",
-	"logo": "logo.png",
-	"department": "Department of Physics and Astronomy",
 	"unit": [
 		{
 			"id": "lecture",

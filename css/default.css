@@ -48,6 +48,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	text-shadow:none;
 	height:44px;
 	width:100%;
+	border: 1px solid #00b4ff;
 }
 
 .header .progressCircle {
@@ -144,6 +145,33 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	padding:45px 0 45px 0;
 }
 
+#welcome .content div {
+	padding: 8px 15px;
+	text-align: center;
+}
+
+#welcome .content .bannerWrapper {
+	padding: 0;
+	margin: 0;
+}
+
+#welcome .content .banner {
+	max-width: 100%;
+}
+
+#welcome .content .title {
+	font-size: 25pt;
+	font-weight: bold;
+}
+
+#welcome .content .subtitle {
+	font-size: 18pt;
+}
+
+#welcome .content .school {
+	max-width: 150px;
+}
+
 #settings .content {
 	padding:45px 0 45px 0;
 }
@@ -207,6 +235,12 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 #settings .content .searchResult .listBar .saved {
 	background-color: #ffa800;/*#b2e8ff;*/
 	border-right:1px solid #3cc954;/*#a2d8ee;*/
+}
+
+#settings .content .questionLink {
+	border-bottom: 1px solid #c7c7c7;
+	padding:8px 15px;
+	line-height: 24px;
 }
 
 #settings .content .updateInfo {
@@ -359,6 +393,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	text-shadow:none;
 	height:44px;
 	width:100%;
+	border: 1px solid #00b4ff;
 }
 
 .footer .submit {

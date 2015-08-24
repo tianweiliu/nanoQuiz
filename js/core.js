@@ -1,4 +1,5 @@
 // Data variables 
+var config;
 var question = 1;
 var questionCount = 1;
 var instruction;
@@ -18,16 +19,105 @@ var savedList;
 var showConsoleLog = true;
 var shuffleQuestion = false;
 var shuffleAnswer = false;
+var remoteUrl;
+var sendAnalytics = true;
 
 // Envirnoment variables
+var packageLoaded = false;
 var switching = false;
 var inMenu = true;
 var localStorageReady = false;
 
 // Envirnoment constants
+const PACKAGE_JSON_URL = "data/package.json";
 const DEFAULT_JSON_URL = "data/data.json";
 
+// Package variables
+var supportEmail;
+
+// Session variables
+var session;
+
+function pageInit() {
+	//$("body").pagecontainer()
+	$("#removeFromWrongList").popup()
+	$("#removeFromWrongList").popup('open').hide();
+	window.location.href=window.location.href.replace("&ui-state=dialog", "");
+}
+
+function loadPackage() {
+	if (showConsoleLog) {
+		console.log(" -------------------- ");
+		console.log("|      nanoQuiz      |");
+		console.log("|    2.0 by David    |");
+		console.log(" -------------------- ");
+	}
+	pageInit();
+	if (showConsoleLog)
+		console.log("Loading package configuration...");
+	$.ajax({
+		dataType: "json",
+		url: PACKAGE_JSON_URL,
+		success: function(data) {
+			if (showConsoleLog)
+				console.log("-\tPackage configuration loaded.");
+			loadConfig(data);
+			onReady();
+			if (remoteUrl) {
+				loadJSON(remoteUrl);
+			}
+			else {
+				loadJSON(DEFAULT_JSON_URL);
+			}
+			$(':mobile-pagecontainer').on('pagecontainershow', onPageSwitch);
+			showLanding();
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			if (showConsoleLog)
+				console.error("-\tCould not load package configuration.", textStatus, errorThrown);
+			$(".title").text("Could not load package configuration.");
+		}
+	});
+}
+
+function loadConfig(config) {
+	if (showConsoleLog)
+		console.log("Package: " + config.app.name + " - " + config.package.title + ": " + config.package.subtitle);
+	document.title = config.app.name + " - " + config.package.title + ": " + config.package.subtitle;
+	if (showConsoleLog)
+		console.log("-\tInitiating landing page...");
+	$(".banner")
+		.attr("src", "data/" + config.package.banner)
+		.attr("alt", config.app.name + " - " + config.package.title + ": " + config.package.subtitle);
+	$(".title").text(config.package.title);
+	$(".subtitle").text(config.package.subtitle);
+	$(".department").text(config.package.department);
+	$(".school")
+		.attr("src", "data/" + config.package.schoolLogo)
+		.attr("alt", config.package.school);
+	supportEmail = config.package.support;
+	$(".supportLink")
+		.attr("href", "mailto:" + supportEmail)
+		.text(supportEmail);
+	$(".nanoQuiz").html("Powered by <a href=\"https://github.com/tianweiliu/nanoQuiz\">nanoQuiz</a>");
+	remoteUrl = config.package.url;
+	if (showConsoleLog)
+		console.log("-\tLanding page ready.");
+	if (ga) {
+		ga('create', config.analytics.id, 'auto');
+		ga('set', {
+		  'appName': config.app.name + " - " + config.package.title + ": " + config.package.subtitle,
+		  'appVersion': config.app.version
+		});
+		aPage("landing");
+		if (showConsoleLog)
+			console.log("-\tGoogle Analytics ready.");
+	}
+}
+
 function onReady() {
+	if (showConsoleLog)
+		console.log("-\tInitiating interface events...");
 	$("body").off("tap").on("tap", function() {
 		$.each(selectCounter, function(key, value) {
 			if (!$("#" + key + "-button").find(":hover").length)
@@ -60,9 +150,43 @@ function onReady() {
 				window.history.back();
 		}
     });
+    if (showConsoleLog)
+		console.log("-\tInterface events initialized.");
 }
 
 /* Menu Events */
+function onPageSwitch(event, ui) {
+	if ($(".ui-page-active")) {
+		setNav($(".ui-page-active").attr("id"));
+		switching = false;
+	}
+}
+
+function setNav(page) {
+	if (page == "settings") {
+		showMenu();
+		aPage(page);
+	}
+	else if (page == "welcome") {
+		showLanding();
+		aPage(page);
+	}
+}
+
+function showLanding() {
+	inMenu = true;
+	$(".menuBtn").removeClass("menu").addClass("close");
+	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
+	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
+	$(".prevPage").hide();
+	$(".submit").hide();
+	$(".start").off("tap").on("tap", function() {
+		$(':mobile-pagecontainer').pagecontainer( "change", "#settings", { transition: "slidedown" } );
+	});
+	$(".wrongList").hide();
+	$(".savedList").hide();
+}
+
 function showMenu() {
 	inMenu = true;
 	$(".menuBtn").removeClass("menu").addClass("close");
@@ -77,6 +201,15 @@ function showMenu() {
 	$(".wrongList").hide();
 	$(".savedList").hide();
 	changeRange();
+	loadSearchResultBar($(".listBar"), instruction.question.length);
+	$.each(instruction.question, function(index, questionData) {
+		if ($.inArray(questionData.id, wrongList) != -1)
+			fillSearchResultBar($(".listBar"), index, "wrong");
+		else if ($.inArray(questionData.id, savedList) != -1)
+			fillSearchResultBar($(".listBar"), index, "saved");
+		else
+			fillSearchResultBar($(".listBar"), index, "filled");
+	});
 }
 
 function hideMenu() {
@@ -263,6 +396,7 @@ function fillSearchResultBar($listBar, index, barClass) {
 }
 
 function loadSearchResultBar($listBar, chunkCount) {
+	$listBar.empty();
 	for (var i = 0; i < chunkCount; i++) {
 		var $chunkBar = $("<div></div>").addClass("chunkBar").css("width", (($listBar.width()/chunkCount - 1) / $listBar.width() * 100) + "%");
 		$listBar.append($chunkBar);
@@ -273,12 +407,6 @@ function loadSearchResultBar($listBar, chunkCount) {
 /* Data Processing Methods */
 function loadJSON(url) {
 	if (url) {
-		if (showConsoleLog) {
-			console.log(" -------------------- ");
-			console.log("|  nanoHUB Quiz Core |");
-			console.log("|    1.1 by David    |");
-			console.log(" -------------------- ");
-		}
 		$(".ui-loader").show();
 		if(typeof(Storage) !== "undefined") {
 			// Code for localStorage/sessionStorage.
@@ -330,6 +458,7 @@ function loadJSON(url) {
 			if (showConsoleLog)
 				console.warn("-\tLocal storage not supported");
 			localStorageReady = false;
+			aException("Local storage not supported", false);
 		}
 		loadDefaultJSON(url);
 	}
@@ -395,6 +524,7 @@ function loadRemoteJSON(url) {
 				loadRemoteJSON(url);
 			});
 			$(".updateResult").html("Cannot connect to server | ").append($refreshJSON).show();
+			aException("Could not fetch JSON from server: " + textStatus + ": " + errorThrown, false);
 			//loadDefaultJSON();
 		}
 	});
@@ -423,7 +553,8 @@ function loadDefaultJSON(url) {
 				}
 			}
 			MenuInit();
-			loadRemoteJSON(url);
+			if (url != DEFAULT_JSON_URL)
+				loadRemoteJSON(url);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			if (showConsoleLog)
@@ -432,7 +563,9 @@ function loadDefaultJSON(url) {
 				MenuInit();
 			else
 				$(".updateResult").html("Cannot load instructions | ").append($refreshJSON).show();
-			loadRemoteJSON(url);
+			if (url != DEFAULT_JSON_URL)
+				loadRemoteJSON(url);
+			aException("Could not load default JSON: " + textStatus + ": " + errorThrown, (instruction == null));
 		}
 	});
 }
@@ -441,17 +574,7 @@ function MenuInit() {
 	$(".ui-loader").hide();
 	if (showConsoleLog)
 		console.log("JSON loading finished");
-	showMenu();
 	populateUnit();
-	loadSearchResultBar($(".listBar"), instruction.question.length);
-	$.each(instruction.question, function(index, questionData) {
-		if ($.inArray(questionData.id, wrongList) != -1)
-			fillSearchResultBar($(".listBar"), index, "wrong");
-		else if ($.inArray(questionData.id, savedList) != -1)
-			fillSearchResultBar($(".listBar"), index, "saved");
-		else
-			fillSearchResultBar($(".listBar"), index, "filled");
-	});
 }
 
 function contentInit() {
@@ -621,10 +744,20 @@ function quizInit() {
 	
 	/* Reset data variables */
 	question = 1;
+
+	/* Reset session variables */
+	session = [];
 	
+	$(".questionList").empty();
 	$(".questions").each(function(index, element) {
 		$(this).find(".question").children(".bullet").html((index + 1).toString() + ".");
+		var $questionLink = $("<a></a>")
+			.attr("href", "#" + $(this).attr("id"))
+			.text($(this).children("div").attr("id"));
+		var $questionList = $("<div></div>").addClass("questionLink").append($questionLink);
+		$(".questionList").append($questionList);
 	});
+	$(".questionList").append("<div class=\"questionLink\"><a href=\"#result\">Result</a></div>");
 	
 	/* Load all answer sprites */
 	$(".answerImage").each(function(index, element) {
@@ -657,6 +790,7 @@ function quizInit() {
 	$(':mobile-pagecontainer').off("pagecontainershow").on("pagecontainershow", function(event, ui) {
 		onQuestionSwitch(event, ui);
 	});
+
 	if (showConsoleLog)
 		console.log("Initialization success\nSwitching to question " + question.toString() + " ...");
 	$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slideup"} );
@@ -702,9 +836,8 @@ function onResize() {
 function onQuestionSwitch(event, ui) {
 	if ($(".ui-page-active")) {
 		var targetQuestion = $(".ui-page-active").attr("id");
-		if (targetQuestion == "settings") {
-			//loadJSON();
-			showMenu();
+		if (targetQuestion == "settings" || targetQuestion == "welcome") {
+			setNav(targetQuestion);
 		}
 		else if (targetQuestion) {
 			targetQuestion = parseInt(targetQuestion.replace("q", ""));
@@ -712,6 +845,7 @@ function onQuestionSwitch(event, ui) {
 				question = targetQuestion;
 				switchQuestion();
 			}
+			aPage($(".ui-page-active .content").attr("id"));
 		}
 		switching = false;
 	}
@@ -742,13 +876,26 @@ function switchQuestion() {
 	$(".savedList").removeClass("saved").addClass("notSaved").show();
 	if ($("#q" + question).children(".content").attr("id")) {
 		if ($.inArray($("#q" + question).children(".content").attr("id"), wrongList) != -1) {
-			$(".wrongList").show().off("tap").on("tap", function(){
-				wrongList.splice($.inArray($("#q" + question).children(".content").attr("id"), wrongList), 1);
-				if (localStorageReady)
-					localStorage.setItem("wrongList", JSON.stringify(wrongList));
-				if (showConsoleLog)
-					console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" removed from wrong list");
-				$(this).hide();
+			$(".wrongList").show().off("tap").on("tap", function(event){
+				event.preventDefault();
+				$("#removeFromWrongList").show().popup('open', {
+					positionTo: 'window',
+					transition: 'pop'
+				});
+				$("#confirmRemoveFromWrongList").off('tap').on('tap', function(event) {
+					event.preventDefault();
+					wrongList.splice($.inArray($("#q" + question).children(".content").attr("id"), wrongList), 1);
+					if (localStorageReady)
+						localStorage.setItem("wrongList", JSON.stringify(wrongList));
+					if (showConsoleLog)
+						console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" removed from wrong list");
+					$(".wrongList").hide();
+					$("#removeFromWrongList").popup('close');
+				});
+				$("#cancelRemoveFromWrongList").off('tap').on('tap', function(event) {
+					event.preventDefault();
+					$("#removeFromWrongList").popup('close');
+				});
 			});
 		}
 		$(".savedList").off("tap").on("tap", function() {
@@ -869,6 +1016,7 @@ function submitAnswer() {
 			"border-left-width": "1px"
 		});
 		$("#q" + question).find(".selected .mark").addClass("wrong").fadeIn("fast");
+		$(".wrongList").show();
 		if ($("#q" + question).children(".content").attr("id") && $.inArray($("#q" + question).children(".content").attr("id"), wrongList) == -1) {
 			wrongList.push($("#q" + question).children(".content").attr("id"));
 			if (localStorageReady)
@@ -876,6 +1024,40 @@ function submitAnswer() {
 			if (showConsoleLog)
 				console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" added to wrong list");
 		}
+		aAnswer($("#q" + question).children(".content").attr("id"), false);
+	}
+	else {
+		aAnswer($("#q" + question).children(".content").attr("id"), true);
 	}
 }
 /* End of Quiz Interface Events */
+
+/* Analytics Events */
+function aPage(page) {
+	if (ga) {
+		ga('send', 'screenview', {'screenName': page});
+	}
+}
+
+function aException(err, isFatal) {
+	if (ga)
+		ga('send', 'exception', {
+		  'exDescription': err,
+		  'exFatal': isFatal
+		});
+}
+
+function aAnswer(id, correct) {
+	var timestamp = Date.now();
+	session.push({
+		id: id,
+		correct: correct,
+		timestamp: timestamp.toString()
+	});
+	if (ga && sendAnalytics) {
+		ga('send', 'event', 'answer', correct ? 'correct' : 'wrong', id, {
+			'timestamp': timestamp.toString()
+		});
+	}
+}
+/* End of Analytics Events */
