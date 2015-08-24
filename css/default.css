@@ -48,6 +48,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	text-shadow:none;
 	height:44px;
 	width:100%;
+	border: 1px solid #00b4ff;
 }
 
 .header .progressCircle {
@@ -140,6 +141,55 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 1) Padding is only placed on the top and/or bottom of the div. The elements within this div have padding on their sides. This saves you from any "box model math". Keep in mind, if you add any side padding or border to the div itself, it will be added to the width you define to create the *total* width. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design.
 
 */
+#welcome .content {
+	padding:45px 0 45px 0;
+}
+
+#welcome .content div {
+	padding: 8px 15px;
+	text-align: center;
+}
+
+#welcome .content .bannerWrapper {
+	padding: 0;
+	margin: 0;
+}
+
+#welcome .content .banner {
+	max-width: 100%;
+}
+
+#welcome .content .title {
+	font-size: 25pt;
+	font-weight: bold;
+}
+
+#welcome .content .subtitle {
+	font-size: 18pt;
+}
+
+#welcome .content .school {
+	max-width: 150px;
+}
+
+#result .content {
+	padding:45px 0 45px 0;
+}
+
+#result .content div {
+	padding: 8px 15px;
+	text-align: center;
+}
+
+#result .content .scoreLabel {
+	font-size: 18pt;
+}
+
+#result .content .scoreVal {
+	font-size: 25pt;
+	font-weight: bold;
+}
+
 #settings .content {
 	padding:45px 0 45px 0;
 }
@@ -195,6 +245,47 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	border-right:1px solid #3cc954;/*#a2d8ee;*/
 }
 
+#settings .content .searchResult .listBar .wrong {
+	background-color: #ff0082;/*#b2e8ff;*/
+	border-right:1px solid #3cc954;/*#a2d8ee;*/
+}
+
+#settings .content .searchResult .listBar .saved {
+	background-color: #ffa800;/*#b2e8ff;*/
+	border-right:1px solid #3cc954;/*#a2d8ee;*/
+}
+
+#settings .content .questionLink {
+	border-bottom: 1px solid #c7c7c7;
+	padding:8px 15px;
+	line-height: 24px;
+}
+
+#settings .content .questionLink a {
+	float: left;
+}
+
+#settings .content .questionLink .questionStatus {
+	float: right;
+	padding: 4px;
+}
+
+#settings .content .questionLink .unanswered {
+	border-radius: 5px;
+	background-color: #FDB45C;
+}
+
+#settings .content .questionLink .correct {
+	border-radius: 5px;
+	border: 1px solid #46BFBD;
+	color: #46BFBD;
+}
+
+#settings .content .questionLink .wrong {
+	border-radius: 5px;
+	border: 1px solid #FF5A5E;
+	color: #FF5A5E;
+}
 
 #settings .content .updateInfo {
 	height:44px;
@@ -346,6 +437,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	text-shadow:none;
 	height:44px;
 	width:100%;
+	border: 1px solid #00b4ff;
 }
 
 .footer .submit {
