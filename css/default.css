@@ -172,6 +172,24 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	max-width: 150px;
 }
 
+#result .content {
+	padding:45px 0 45px 0;
+}
+
+#result .content div {
+	padding: 8px 15px;
+	text-align: center;
+}
+
+#result .content .scoreLabel {
+	font-size: 18pt;
+}
+
+#result .content .scoreVal {
+	font-size: 25pt;
+	font-weight: bold;
+}
+
 #settings .content {
 	padding:45px 0 45px 0;
 }
@@ -241,6 +259,32 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	border-bottom: 1px solid #c7c7c7;
 	padding:8px 15px;
 	line-height: 24px;
+}
+
+#settings .content .questionLink a {
+	float: left;
+}
+
+#settings .content .questionLink .questionStatus {
+	float: right;
+	padding: 4px;
+}
+
+#settings .content .questionLink .unanswered {
+	border-radius: 5px;
+	background-color: #FDB45C;
+}
+
+#settings .content .questionLink .correct {
+	border-radius: 5px;
+	border: 1px solid #46BFBD;
+	color: #46BFBD;
+}
+
+#settings .content .questionLink .wrong {
+	border-radius: 5px;
+	border: 1px solid #FF5A5E;
+	color: #FF5A5E;
 }
 
 #settings .content .updateInfo {

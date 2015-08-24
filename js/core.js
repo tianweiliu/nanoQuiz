@@ -36,7 +36,12 @@ const DEFAULT_JSON_URL = "data/data.json";
 var supportEmail;
 
 // Session variables
-var session;
+var session = {
+	start: -1,
+	answers: []
+};
+var myChart;
+var myTimer;
 
 function pageInit() {
 	//$("body").pagecontainer()
@@ -171,35 +176,76 @@ function setNav(page) {
 		showLanding();
 		aPage(page);
 	}
+	else if (page == "result") {
+		showResult();
+		aPage(page);
+	}
 }
 
-function showLanding() {
+function hideQuestion() {
 	inMenu = true;
-	$(".menuBtn").removeClass("menu").addClass("close");
-	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
-	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
+	var circleHeight = $(".progressCircle").height() + parseInt($(".progressCircle").css("padding").replace("px", "")) * 2;
+	$(".progressCircle").animate({marginTop: -circleHeight + "px"}, "slow", function() {
+		$(".progressCircle").hide();
+	});
 	$(".prevPage").hide();
 	$(".submit").hide();
-	$(".start").off("tap").on("tap", function() {
-		$(':mobile-pagecontainer').pagecontainer( "change", "#settings", { transition: "slidedown" } );
-	});
 	$(".wrongList").hide();
 	$(".savedList").hide();
 }
 
-function showMenu() {
-	inMenu = true;
-	$(".menuBtn").removeClass("menu").addClass("close");
-	$(".progressCircle").animate({marginTop: (-$(".progressCircle").height() - parseInt($(".progressCircle").css("padding").replace("px", ""))) + "px"}, "fast").fadeOut("fast");
+function showResult() {
+	hideQuestion();
+	$(".menuBtn").removeClass("menu").addClass("close").show();
+	$(".footer .forward").hide();
+	var numCorrect = 0;
+	$.each(session.answers, function(index, answer) {
+		if (answer.correct) {
+			numCorrect++;
+		}
+	});
+	if (session.start > -1) {
+		var data = [
+		    {
+		        value: session.answers.length - numCorrect,
+		        color:"#F7464A",
+		        highlight: "#FF5A5E",
+		        label: "Incorrect"
+		    },
+		    {
+		        value: numCorrect,
+		        color: "#46BFBD",
+		        highlight: "#5AD3D1",
+		        label: "Correct"
+		    },
+		    {
+		        value: questionCount - session.answers.length,
+		        color: "#FDB45C",
+		        highlight: "#FFC870",
+		        label: "Unanswered"
+		    }
+		];
+		var ctx = $("#myChart").get(0).getContext("2d");
+		myChart = new Chart(ctx).Pie(data);
+	}
+}
+
+function showLanding() {
+	hideQuestion();
 	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
-	$(".prevPage").hide();
-	$(".submit").hide();
+	$(".start").off("tap").on("tap", function() {
+		$(':mobile-pagecontainer').pagecontainer( "change", "#settings", { transition: "slidedown" } );
+	});
+}
+
+function showMenu() {
+	hideQuestion();
+	$(".menuBtn").removeClass("menu").addClass("close");
+	$(".footer .forward").off("tap").removeClass("nextPage").addClass("start").html("Start").show();
 	$(".start").off("tap").on("tap", function() {
 		if (contentInit())
 			quizInit();
 	});
-	$(".wrongList").hide();
-	$(".savedList").hide();
 	changeRange();
 	loadSearchResultBar($(".listBar"), instruction.question.length);
 	$.each(instruction.question, function(index, questionData) {
@@ -215,7 +261,7 @@ function showMenu() {
 function hideMenu() {
 	inMenu = false;
 	$(".menuBtn").removeClass("close").addClass("menu").show();
-	$(".progressCircle").fadeIn("fast").animate({marginTop: "0px"}, "fast");
+	$(".progressCircle").show().animate({marginTop: "0px"}, "fast");
 	$(".start").off("tap").removeClass("start").addClass("nextPage").html("Next");
 	$(".nextPage").off("tap").on("tap", function(e) {
 		e.preventDefault();
@@ -307,6 +353,7 @@ function changeRange() {
 	if (instruction.question && instruction.question.length > 0 && ($("#unit").val() != "any") && (from != "any" || to != "any")) {
 		if (showConsoleLog)
 			console.log("Searching questions (from: '" + $("#unit").val() + " " + from + "', to: '" + $("#unit").val() + " " + to + "')...");
+		$(".rangeSelected").text("from: '" + $("#unit").val() + " " + from + "', to: '" + $("#unit").val() + " " + to + "'");
 		if (from != "any" && to != "any" && parseInt(from) > parseInt(to)) {
 			var temp = from;
 			from = to;
@@ -341,8 +388,10 @@ function changeRange() {
 		});
 		applyFilter(questionList);
 	}
-	else 
+	else {
+		$(".rangeSelected").text("all");
 		applyFilter();
+	}
 }
 
 function applyFilter(questionList) {
@@ -579,6 +628,8 @@ function MenuInit() {
 
 function contentInit() {
 	if (instruction && instruction.question) {
+		$(".ui-loader").show();
+
 		/* Remove old questions if any */
 		$(".questions").remove();
 		
@@ -594,9 +645,9 @@ function contentInit() {
 			$(this).attr("id", "q" + (index + 1).toString());
 		});
 		
-		return true
+		return true;
 	}
-	return false
+	return false;
 }
 
 function loadQuestion(data) {
@@ -746,18 +797,33 @@ function quizInit() {
 	question = 1;
 
 	/* Reset session variables */
-	session = [];
+	var timestamp = Date.now();
+	session = {
+		start: timestamp,
+		answers: []
+	};
+	myTimer = setInterval(function() {
+		var timestamp = Date.now();
+		$(".timeElapsed").text(moment.duration(timestamp - session.start).format("h:mm:ss", { trim: false }));
+	}, 1000);
 	
-	$(".questionList").empty();
+	$(".questionList").html("<div class=\"questionLink\"><a href=\"#result\">Statistics</a><div class=\"clearfloat\"></div></div>");
 	$(".questions").each(function(index, element) {
 		$(this).find(".question").children(".bullet").html((index + 1).toString() + ".");
 		var $questionLink = $("<a></a>")
 			.attr("href", "#" + $(this).attr("id"))
-			.text($(this).children("div").attr("id"));
-		var $questionList = $("<div></div>").addClass("questionLink").append($questionLink);
+			.text($(this).attr("id").replace("q", "") + ". " + $(this).children("div").attr("id"));
+		var $questionStatus = $("<div></div>")
+			.addClass("questionStatus unanswered")
+			.text("Unanswered");
+		var $questionList = $("<div></div>")
+			.addClass("questionLink")
+			.attr("id", "qLink" + $(this).attr("id").replace("q", ""))
+			.append($questionLink)
+			.append($questionStatus)
+			.append("<div class=\"clearfloat\"></div>");
 		$(".questionList").append($questionList);
 	});
-	$(".questionList").append("<div class=\"questionLink\"><a href=\"#result\">Result</a></div>");
 	
 	/* Load all answer sprites */
 	$(".answerImage").each(function(index, element) {
@@ -785,8 +851,10 @@ function quizInit() {
 		"max": questionCount,
 		"fgColor": "#00e4ff"
 	});
-	$(".knob").off("change", onKnobChange).on("change", onKnobChange);
+	$(".knob").off("change", onKnobChange).on("change", onKnobChange).val(0).trigger("change");;
 	
+	uiEvent();
+
 	$(':mobile-pagecontainer').off("pagecontainershow").on("pagecontainershow", function(event, ui) {
 		onQuestionSwitch(event, ui);
 	});
@@ -794,10 +862,12 @@ function quizInit() {
 	if (showConsoleLog)
 		console.log("Initialization success\nSwitching to question " + question.toString() + " ...");
 	$(':mobile-pagecontainer').pagecontainer( "change", "#q" + question.toString(), { transition: "slideup"} );
+
+	$(".ui-loader").hide();
 }
 
 function onKnobChange() {
-	$(".progressInfo").html(question.toString() + "/" + questionCount.toString());
+	$(".progressInfo").html(session.answers.length.toString() + "/" + questionCount.toString());
 }
 
 function nextQuestion() {
@@ -836,7 +906,7 @@ function onResize() {
 function onQuestionSwitch(event, ui) {
 	if ($(".ui-page-active")) {
 		var targetQuestion = $(".ui-page-active").attr("id");
-		if (targetQuestion == "settings" || targetQuestion == "welcome") {
+		if (targetQuestion == "settings" || targetQuestion == "welcome" || targetQuestion == "result") {
 			setNav(targetQuestion);
 		}
 		else if (targetQuestion) {
@@ -854,13 +924,22 @@ function onQuestionSwitch(event, ui) {
 function switchQuestion() {
 	if (inMenu)
 		hideMenu();
-	$(".knob").val(question).trigger("change");
+	console.log(question);
 	if (question >= questionCount)
-		$(".nextPage").html("Result");
+		$(".nextPage").html("Result").show().off('tap').on('tap', function(e) {
+			e.preventDefault();
+			$(":mobile-pagecontainer").pagecontainer('change', '#result', {transition:'slideup'});
+		});
 	else if($("#q" + question).find(".locked").length > 0)
-		$(".nextPage").html("Next");
+		$(".nextPage").html("Next").show().off('tap').on('tap', function(e){
+			e.preventDefault();
+			nextQuestion();
+		});
 	else
-		$(".nextPage").html("Skip");
+		$(".nextPage").html("Skip").show().off('tap').on('tap', function(e){
+			e.preventDefault();
+			nextQuestion();
+		});
 	if (question <= 1) 
 		$(".prevPage").hide();
 	else
@@ -1024,11 +1103,42 @@ function submitAnswer() {
 			if (showConsoleLog)
 				console.log("Question \"" + $("#q" + question).children(".content").attr("id") + "\" added to wrong list");
 		}
+		$("#qLink" + question).children(".questionStatus")
+			.removeClass("unanswered")
+			.addClass("wrong")
+			.text("Incorrect");
 		aAnswer($("#q" + question).children(".content").attr("id"), false);
 	}
 	else {
+		$("#qLink" + question).children(".questionStatus")
+			.removeClass("unanswered")
+			.addClass("correct")
+			.text("Correct");
 		aAnswer($("#q" + question).children(".content").attr("id"), true);
 	}
+	uiEvent();
+}
+
+function uiEvent() {
+	$(".knob").val(session.answers.length).trigger("change");
+	var numCorrect = 0;
+	$.each(session.answers, function(index, answer) {
+		if (answer.correct) {
+			numCorrect++;
+		}
+	});
+	if (session.answers.length > 0) {
+		$(".scoreLabel").text("Your score: ");
+		$(".scoreVal").text(Math.round(numCorrect / session.answers.length * 100));
+	}
+	else {
+		$(".scoreLabel").text("Your haven't answered any question yet.");
+		$(".scoreVal").text("");
+	}
+	$(".numQuestions").text(questionCount);
+	$(".totalAnswered").text(session.answers.length);
+	$(".totalCorrect").text(numCorrect);
+	$(".totalWrong").text(session.answers.length - numCorrect);
 }
 /* End of Quiz Interface Events */
 
@@ -1049,7 +1159,7 @@ function aException(err, isFatal) {
 
 function aAnswer(id, correct) {
 	var timestamp = Date.now();
-	session.push({
+	session.answers.push({
 		id: id,
 		correct: correct,
 		timestamp: timestamp.toString()

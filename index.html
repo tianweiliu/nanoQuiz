@@ -14,6 +14,9 @@
 <!--script src="http://code.jquery.com/mobile/git/jquery.mobile-git.js" type="text/javascript"></script-->
 <script src="js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
 <script src="js/jquery.knob.js" type="text/javascript"></script>
+<script src="js/Chart.min.js"></script>
+<script src="js/moment.js"></script>
+<script src="js/moment-duration-format.js"></script>
 <script src="js/core.js" type="text/javascript"></script>
 <!-- Google Analytics -->
 <script>
@@ -127,12 +130,23 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 <!-- End Menu Page -->
 <!-- Result Page -->
 <div data-role="page" id="result">
-	<div class="score">
-		<span class="scoreLabel">Your score is: </span>
-		<span class="scoreVal"></span>
+	<div class="content">
+    <div class="score">
+  		<span class="scoreLabel">You haven't answered any question yet.</span>
+  		<span class="scoreVal"></span>
+    </div>
+    <div class="chart">
+      <canvas id="myChart" width="200"></canvas>
+    </div>
+    <div class="info">
+      <div># of Questions: <span class="numQuestions"></span></div>
+      <div>Total Answered: <span class="totalAnswered"></span></div>
+      <div>Total Correct: <span class="totalCorrect"></span></div>
+      <div>Total Incorrect: <span class="totalWrong"></span></div>
+      <div>Time Elasped: <span class="timeElapsed"></span></div>
+      <div>Range: <span class="rangeSelected"></span></div>
+    </div>
 	</div>
-	<div class="chart"></div>
-	<div class="info"></div>
 </div>
 <!-- End Result Page -->
 <!-- Popup -->
@@ -172,7 +186,7 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         	onResize();
         });
 		loadPackage();
-    });
+  });
 </script>
 </body>
 </html>
