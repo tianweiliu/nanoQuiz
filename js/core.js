@@ -34,6 +34,7 @@ const DEFAULT_JSON_URL = "data/data.json";
 
 // Package variables
 var supportEmail;
+var courseUrl;
 
 // Session variables
 var session = {
@@ -104,6 +105,10 @@ function loadConfig(config) {
 	$(".supportLink")
 		.attr("href", "mailto:" + supportEmail)
 		.text(supportEmail);
+	courseUrl = config.package.course;
+	$(".courseLink")
+		.attr("href", courseUrl)
+		.text(courseUrl);
 	$(".nanoQuiz").html("Powered by <a href=\"https://github.com/tianweiliu/nanoQuiz\">nanoQuiz</a>");
 	remoteUrl = config.package.url;
 	if (showConsoleLog)
@@ -316,10 +321,11 @@ function populateSet() {
 						if (showConsoleLog)
 							console.log("-\tQuestion ('" + qValue.id + "') contains unit type ('" + value.id + "'), value: " + qValue[value.id]);
 						*/
-						if (qValue[value.id] < unitStartIndex || unitStartIndex == -1)
-							unitStartIndex = qValue[value.id];
-						if (qValue[value.id] > unitLastIndex || unitLastIndex == -1)
-							unitLastIndex = qValue[value.id];
+						var thisUnitIndex = parseInt(qValue[value.id]);
+						if (thisUnitIndex < unitStartIndex || unitStartIndex == -1)
+							unitStartIndex = thisUnitIndex;
+						if (thisUnitIndex > unitLastIndex || unitLastIndex == -1)
+							unitLastIndex = thisUnitIndex;
 					}
 				});
 				if (showConsoleLog)
