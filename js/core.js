@@ -321,10 +321,11 @@ function populateSet() {
 						if (showConsoleLog)
 							console.log("-\tQuestion ('" + qValue.id + "') contains unit type ('" + value.id + "'), value: " + qValue[value.id]);
 						*/
-						if (qValue[value.id] < unitStartIndex || unitStartIndex == -1)
-							unitStartIndex = qValue[value.id];
-						if (qValue[value.id] > unitLastIndex || unitLastIndex == -1)
-							unitLastIndex = qValue[value.id];
+						var thisUnitIndex = parseInt(qValue[value.id]);
+						if (thisUnitIndex < unitStartIndex || unitStartIndex == -1)
+							unitStartIndex = thisUnitIndex;
+						if (thisUnitIndex > unitLastIndex || unitLastIndex == -1)
+							unitLastIndex = thisUnitIndex;
 					}
 				});
 				if (showConsoleLog)
