@@ -1,17 +1,18 @@
 {
 	"app": {
-		"name": "Smash",
-		"version": "1.0"
+		"name": "SMASH Physics",
+		"version": "1.5"
 	},
 	"package": {
-		"title": "PHYS 342",
-		"subtitle": "Modern Physics",
-		"url": "http://tianweiliu.net/nanoQuiz/data/",
+		"title": "Modern Physics",
+		"subtitle": "PHYS 342",
+		"url": "http://cychosz.com/SMASHphysics/modern/data/",
 		"banner": "banner.jpg",
 		"department": "Department of Physics and Astronomy",
 		"school": "Purdue University",
 		"schoolLogo": "purdue.png",
-		"support": "email@example.com"
+		"support": "email@example.com",
+		"course": "http://nanohub.org/courses/phys342"
 	},
 	"analytics": {
 		"id": "UA-66185304-1",

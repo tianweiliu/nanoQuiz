@@ -34,6 +34,7 @@ const DEFAULT_JSON_URL = "data/data.json";
 
 // Package variables
 var supportEmail;
+var courseUrl;
 
 // Session variables
 var session = {
@@ -104,6 +105,10 @@ function loadConfig(config) {
 	$(".supportLink")
 		.attr("href", "mailto:" + supportEmail)
 		.text(supportEmail);
+	courseUrl = config.package.course;
+	$(".courseLink")
+		.attr("href", courseUrl)
+		.text(courseUrl);
 	$(".nanoQuiz").html("Powered by <a href=\"https://github.com/tianweiliu/nanoQuiz\">nanoQuiz</a>");
 	remoteUrl = config.package.url;
 	if (showConsoleLog)
